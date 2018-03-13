@@ -1,0 +1,810 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Int",
+				"Int_Factor"
+			],
+			[
+				"Int_",
+				"Int_Term"
+			],
+			[
+				"iden",
+				"Ident"
+			],
+			[
+				"Pro",
+				"Prog_Stmt"
+			],
+			[
+				"Ba",
+				"Basic_Array_Dimensions"
+			],
+			[
+				"Basic",
+				"Basic_Array_Dimensions"
+			],
+			[
+				"Arr",
+				"Array_Dimensions"
+			],
+			[
+				"De",
+				"Declaration"
+			],
+			[
+				"re",
+				"removeErrorTokens"
+			],
+			[
+				"le",
+				"lexerErrors"
+			],
+			[
+				"fin",
+				"findErrorTokens"
+			],
+			[
+				"ma",
+				"matchingWords"
+			],
+			[
+				"mat",
+				"match"
+			],
+			[
+				"fre",
+				"frequentWords"
+			],
+			[
+				"match",
+				"matchedWords"
+			],
+			[
+				"max",
+				"maxLineLength"
+			],
+			[
+				"for",
+				"forEach"
+			],
+			[
+				"ge",
+				"getLines"
+			],
+			[
+				"non",
+				"nonemptylines"
+			],
+			[
+				"is",
+				"isTextEmpty"
+			],
+			[
+				"get",
+				"getWords"
+			],
+			[
+				"background-",
+				"background-color"
+			],
+			[
+				"background",
+				"background-color"
+			],
+			[
+				"margi",
+				"margin"
+			],
+			[
+				"back",
+				"background-size"
+			],
+			[
+				"justify",
+				"justify-all"
+			],
+			[
+				"marg",
+				"margin-right"
+			],
+			[
+				"fle",
+				"flex-start"
+			],
+			[
+				"alig",
+				"align-items"
+			],
+			[
+				"co",
+				"column-reverse"
+			],
+			[
+				"flex",
+				"flex-direction"
+			],
+			[
+				"col",
+				"color"
+			],
+			[
+				"min",
+				"min-width"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"al",
+				"text-align"
+			],
+			[
+				"fl",
+				"flex-start"
+			],
+			[
+				"align",
+				"align-content"
+			],
+			[
+				"tran",
+				"transition"
+			],
+			[
+				"mar",
+				"margin"
+			],
+			[
+				"sha",
+				"box-shadow"
+			],
+			[
+				"wid",
+				"width"
+			],
+			[
+				"backgro",
+				"background-image"
+			],
+			[
+				"fon",
+				"font"
+			],
+			[
+				"doulbe",
+				"doubleMe"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "comment \"%\" ;\ncomment \"/*\" \"*/\";\n\n\n{-\nprog -> block\n\nblock -> declarations program_body.\n\ndeclarations -> declaration SEMICOLON declarations\n             |.\n\ndeclaration -> var_declaration\n             | fun_declaration.\n\nvar_declaration -> VAR ID array_dimensions COLON type.\n\ntype -> INT\n      | REAL\n      | BOOL. \n\narray_dimensions -> SLPAR expr SRPAR array_dimensions\n             |.\n\nfun_declaration -> FUN ID param_list COLON type  \n                                            CLPAR fun_block CRPAR.\n\nfun_block -> declarations fun_body. \n\nparam_list -> LPAR parameters RPAR.\n\nparameters -> basic_declaration more_parameters\n            |.\n\nmore_parameters -> COMMA  basic_declaration more_parameters\n            |.\n\nbasic_declaration -> ID basic_array_dimensions COLON type.\n\nbasic_array_dimensions -> SLPAR SRPAR basic_array_dimensions\n             |.\n\nprogram_body -> BEGIN prog_stmts END.\n\nfun_body -> BEGIN prog_stmts RETURN expr SEMICOLON END.\n\nprog_stmts -> prog_stmt SEMICOLON prog_stmts\n            |.                         \n                                        \nprog_stmt -> IF expr THEN prog_stmt ELSE prog_stmt\n           | WHILE expr DO prog_stmt\n           | READ identifier\n           | identifier ASSIGN expr\n           | PRINT expr\n           | CLPAR block CRPAR.\n\nidentifier -> ID array_dimensions.\n\nexpr ->  expr OR bint_term\n       | bint_term.\n\nbint_term -> bint_term AND bint_factor\n           | bint_factor.\n\nbint_factor -> NOT bint_factor\n             | int_expr compare_op int_expr\n             | int_expr.\n\ncompare_op -> EQUAL | LT | GT | LE |GE.\n\nint_expr -> int_expr addop int_term\n          | int_term.\n\naddop -> ADD | SUB.\n\nint_term -> int_term mulop int_factor\n          | int_factor.\n\nmulop -> MUL | DIV.\n\nint_factor -> LPAR expr RPAR\n            | SIZE LPAR ID basic_array_dimensions RPAR\n            | FLOAT LPAR expr RPAR\n            | FLOOR LPAR expr RPAR\n            | CEIL LPAR expr RPAR\n            | ID modifier_list\n            | IVAL\n            | RVAL\n            | BVAL\n            | SUB int_factor.\n\nmodifier_list -> LPAR arguments RPAR\n           | array_dimensions.\n\narguments -> expr more_arguments\n           |.\n\nmore_arguments -> COMMA expr more_arguments\n           |.\n-}\n\nSTART.  Start ::= Block;\n\nBProg.  Block ::= Declarations Program_Body;\n\nDSemi.  Declarations ::= Declaration \";\" Declarations ;\nDEmpty. Declarations ::= ;\n\nDVar.   Declaration ::= Var_Declaration ;\nDFun.   Declaration ::= Fun_Declaration ;\n\nVD.     Var_Declaration ::= \"var\" Ident Array_Dimensions \":\" Type ;\n\nTInt.   Type ::= \"int\" ;\nTReal.  Type ::= \"real\" ;\nTBool.  Type ::= \"bool\" ;\n\nADExpr. Array_Dimensions ::= \"[\" Expr \"]\" Array_Dimensions ;\nADEmpty.Array_Dimensions ::= ;\n\nFDDec.  Fun_Declaration ::= \"fun\" Ident Param_List \":\" Type \"{\" Fun_Block \"}\" ;\n\nFB.     Fun_Block ::= Declarations Fun_Body ;\n\nPL.     Param_List ::= \"(\" Parameters \")\" ;\n\nPParams.Parameters ::= Basic_Declaration More_Parameters ;\nPEmpty. Parameters ::= ;\n\nMPMore. More_Parameters ::= \",\" Basic_Declaration More_Parameters ;\nMPEmpty.More_Parameters ::= ;\n\nBDBasic.Basic_Declaration ::= Ident Basic_Array_Dimensions \":\" Type ;\n\nBAD.    Basic_Array_Dimensions ::= \"[\" \"]\" Basic_Array_Dimensions ;\nBADEmpty.Basic_Array_Dimensions ::= ;\n\nPBBody. Program_Body ::= \"begin\" Prog_Stmts \"end\" ;\n\nFBBody. Fun_Body ::= \"begin\" Prog_Stmts \"return\" Expr \";\" \"end\" ;\n\nPSSemi. Prog_Stmts ::= Prog_Stmt \";\" Prog_Stmts ;\nPSEmpty.Prog_Stmts ::= ;\n\nPSITE.  Prog_Stmt ::= \"if\" Expr \"then\" Prog_Stmt \"else\" Prog_Stmt ;\nPSWhile.Prog_Stmt ::= \"while\" Expr \"do\" Prog_Stmt ;\nPSRead. Prog_Stmt ::= \"read\" Identifier ;\nPSAssign.Prog_Stmt ::= Identifier \":=\" Expr ;\nPSPrint.Prog_Stmt ::= \"print\" Expr ;\nPSCPar. Prog_Stmt ::= \"{\" Block \"}\" ;\n\n\nID. \tIdentifier ::= Ident Array_Dimensions ;\n\nEOr.\tExpr ::= Expr \"or\" Bint_Term ;\nEBint.\tExpr ::= Bint_Term ;\n\nBTAnd.\tBint_Term ::= Bint_Term \"and\" Bint_Factor ;\nBTFactor.Bint_Term ::= Bint_Factor ;\n\nBFNot.\tBint_Factor ::= \"not\" Bint_Factor ;\nBFComp. Bint_Factor ::= Int_Expr Compare_Op Int_Expr ;\nBFExpr. Bint_Factor ::= Int_Expr ;\n\nCOEq.\tCompare_Op ::= \"=\" ;\nCOLt.\tCompare_Op ::= \"<\" ;\nCOGt.\tCompare_Op ::= \">\" ;\nCOLe.\tCompare_Op ::= \"=<\" ;\nCOGe.\tCompare_Op ::= \">=\" ;\n\nIEAddop.Int_Expr ::= Int_Expr Addop Int_Term ;\nIETerm.\tInt_Expr ::= Int_Term ;\n\nAAdd. \tAddop ::= \"+\" ;\nASub.\tAddop ::= \"-\" ;\n\nITMul.\tInt_Term ::= Int_Term Mulop Int_Factor ;\nITFactor.Int_Term ::= Int_Factor;\n\nMMul.\tMulop ::= \"*\" ;\nMDiv.\tMulop ::= \"/\" ;\n\nIFPar.\tInt_Factor ::= \"(\" Expr \")\" ;\nIFArray.Int_Factor ::= \"size\" \"(\" Basic_Array_Dimensions \")\" ;\nIFFLoat.Int_Factor ::= \"float\" \"(\" Expr \")\" ;\nIFFloor.Int_Factor ::= \"floor\" \"(\" Expr \")\" ;\nIFCeil. Int_Factor ::= \"ceil\" \"(\" Expr \")\" ;\nIFModList.Int_Factor ::= Ident Modifier_List ;\nIFInt.\tInt_Factor ::= Integer ;\nIFReal. Int_Factor ::= Double ;\nIFTrue. Int_Factor ::= \"true\" ;\nIFFalse.Int_Factor ::= \"false\" ;\n\n\nMLArgs. Modifier_List ::= \"(\" Arguments \")\" ;\nMLArray.Modifier_List ::= Array_Dimensions ;\n\nAExpr.  Arguments ::= Expr More_Arguments ;\nAEmpty. Arguments ::= ;\n\nMAComma.More_Arguments ::= \",\" Expr More_Arguments ;\nMAEmpty.More_Arguments ::= ;",
+			"file": "mplus.bnfc",
+			"file_size": 5210,
+			"file_write_time": 131654528654975379,
+			"settings":
+			{
+				"buffer_size": 5115,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "AbsMplus.hs",
+			"settings":
+			{
+				"buffer_size": 3176,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "SkelMplus.hs",
+			"settings":
+			{
+				"buffer_size": 4743,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "DocMplus.txt",
+			"settings":
+			{
+				"buffer_size": 5351,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "TestMplus.hs",
+			"settings":
+			{
+				"buffer_size": 1928,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ParMplus.y",
+			"settings":
+			{
+				"buffer_size": 7570,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "LexMplus.x",
+			"settings":
+			{
+				"buffer_size": 6064,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Makefile",
+			"settings":
+			{
+				"buffer_size": 326,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "ErrM.hs",
+			"settings":
+			{
+				"buffer_size": 796,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "LayoutMplus.hs",
+			"settings":
+			{
+				"buffer_size": 9657,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "PrintMplus.hs",
+			"settings":
+			{
+				"buffer_size": 10139,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "Pack",
+		"selected_items":
+		[
+			[
+				"Pack",
+				"Package Control: List Packages"
+			]
+		],
+		"width": 444.0
+	},
+	"console":
+	{
+		"height": 130.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/michaelgeeraert/Documents/GitHub/seng513/Assignment3/index.js",
+		"/Users/michaelgeeraert/Projects/seng513/Assignment3/index.js",
+		"/Users/michaelgeeraert/Downloads/eb-node-express-signup-master/iam_policy.json",
+		"/Users/michaelgeeraert/Desktop/app.js",
+		"/Users/michaelgeeraert/Desktop/exampleparser.hs",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/minisculus_lexer.x",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/lexer.hs",
+		"/Users/michaelgeeraert/Desktop/Assignment3/package-lock.json",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/basicfragment.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/main.hs",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/parser.hs",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/minisculus_lexer.hs",
+		"/Users/michaelgeeraert/Documents/GitHub/seng513/Assignment2/code.js",
+		"/Users/michaelgeeraert/Desktop/untitled folder/code.js",
+		"/Users/michaelgeeraert/Documents/GitHub/seng513/Assignment2/index.html",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/styles.css",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/page3.html",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/page1.html",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/page4.html",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/index.html",
+		"/Users/michaelgeeraert/Desktop/SENG513/Assignment 1/page2.html",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/comments.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/eofcomment.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/expressions.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/validIds.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/README.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/nestedmultilinetest.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/LexerStub.x",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/test9.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/test6.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/test4.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/test3.txt",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/test2.txt",
+		"/Users/michaelgeeraert/Desktop/index.html",
+		"/Users/michaelgeeraert/Desktop/basic.x",
+		"/Users/michaelgeeraert/Desktop/LexerStub.x",
+		"/Users/michaelgeeraert/Desktop/assignment1.x",
+		"/Users/michaelgeeraert/Desktop/tutorial.hs"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "mplus.bnfc",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5115,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								156,
+								156
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2400.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "AbsMplus.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3176,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "SkelMplus.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4743,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "DocMplus.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5351,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "TestMplus.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1928,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "ParMplus.y",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7570,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "LexMplus.x",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6064,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Makefile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 326,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "ErrM.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 796,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "LayoutMplus.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9657,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "PrintMplus.hs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10139,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sublime_haskell_output_panel":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 102.0
+	},
+	"pinned_build_system": "Packages/Haskell/Haskell.sublime-build",
+	"project": "assignment3.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
