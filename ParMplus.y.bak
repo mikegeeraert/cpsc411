@@ -187,7 +187,6 @@ Int_Factor : '(' Expr ')' { AbsMplus.IFPar $2 }
            | Double { AbsMplus.IFReal $1 }
            | 'true' { AbsMplus.IFTrue }
            | 'false' { AbsMplus.IFFalse }
-           | '-' Int_Factor { AbsMplus.IFNeg $2 }
 Modifier_List :: { Modifier_List }
 Modifier_List : '(' Arguments ')' { AbsMplus.MLArgs $2 }
               | Array_Dimensions { AbsMplus.MLArray $1 }

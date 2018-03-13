@@ -12,7 +12,7 @@ import ParMplus
 import SkelMplus
 import PrintMplus
 import AbsMplus
-
+import LayoutMplus
 
 
 
@@ -20,7 +20,7 @@ import ErrM
 
 type ParseFun a = [Token] -> Err a
 
-myLLexer = myLexer
+myLLexer = resolveLayout True . myLexer
 
 type Verbosity = Int
 

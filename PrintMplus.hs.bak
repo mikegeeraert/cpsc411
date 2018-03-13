@@ -233,7 +233,6 @@ instance Print Int_Factor where
     IFReal d -> prPrec i 0 (concatD [prt 0 d])
     IFTrue -> prPrec i 0 (concatD [doc (showString "true")])
     IFFalse -> prPrec i 0 (concatD [doc (showString "false")])
-    IFNeg intfactor -> prPrec i 0 (concatD [doc (showString "-"), prt 0 intfactor])
 
 instance Print Modifier_List where
   prt i e = case e of

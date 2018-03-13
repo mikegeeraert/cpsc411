@@ -131,7 +131,6 @@ transInt_Factor x = case x of
   IFReal double -> failure x
   IFTrue -> failure x
   IFFalse -> failure x
-  IFNeg intfactor -> failure x
 transModifier_List :: Modifier_List -> Result
 transModifier_List x = case x of
   MLArgs arguments -> failure x

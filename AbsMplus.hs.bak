@@ -112,7 +112,6 @@ data Int_Factor
     | IFReal Double
     | IFTrue
     | IFFalse
-    | IFNeg Int_Factor
   deriving (Eq, Ord, Show, Read)
 
 data Modifier_List = MLArgs Arguments | MLArray Array_Dimensions

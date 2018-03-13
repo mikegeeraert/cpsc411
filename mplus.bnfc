@@ -1,4 +1,3 @@
-layout "=" ; --means that anything to the right of an equal sign does not need a seperator to 
 comment "%" ;
 comment "/*" "*/";
 
@@ -191,7 +190,7 @@ IFInt.	Int_Factor ::= Integer ;
 IFReal. Int_Factor ::= Double ;
 IFTrue. Int_Factor ::= "true" ;
 IFFalse.Int_Factor ::= "false" ;
-
+IFNeg.	Int_Factor ::= "-" Int_Factor ;
 
 MLArgs. Modifier_List ::= "(" Arguments ")" ;
 MLArray.Modifier_List ::= Array_Dimensions ;
