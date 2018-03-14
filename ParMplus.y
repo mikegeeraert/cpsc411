@@ -178,7 +178,7 @@ Mulop :: { Mulop }
 Mulop : '*' { AbsMplus.MMul } | '/' { AbsMplus.MDiv }
 Int_Factor :: { Int_Factor }
 Int_Factor : '(' Expr ')' { AbsMplus.IFPar $2 }
-           | 'size' '(' Basic_Array_Dimensions ')' { AbsMplus.IFArray $3 }
+           | 'size' '(' Ident Basic_Array_Dimensions ')' { AbsMplus.IFArray $3 $4 }
            | 'float' '(' Expr ')' { AbsMplus.IFFLoat $3 }
            | 'floor' '(' Expr ')' { AbsMplus.IFFloor $3 }
            | 'ceil' '(' Expr ')' { AbsMplus.IFCeil $3 }

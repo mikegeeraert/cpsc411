@@ -119,6 +119,7 @@ All other symbols are terminals.
   |  |  **|**  | //Double// 
   |  |  **|**  | ``true`` 
   |  |  **|**  | ``false`` 
+  |  |  **|**  | ``-`` //Int_Factor// 
   | //Modifier_List// | -> | ``(`` //Arguments// ``)`` 
   |  |  **|**  | //Array_Dimensions// 
   | //Arguments// | -> | //Expr// //More_Arguments// 

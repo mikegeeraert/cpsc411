@@ -224,7 +224,7 @@ instance Print Mulop where
 instance Print Int_Factor where
   prt i e = case e of
     IFPar expr -> prPrec i 0 (concatD [doc (showString "("), prt 0 expr, doc (showString ")")])
-    IFArray basicarraydimensions -> prPrec i 0 (concatD [doc (showString "size"), doc (showString "("), prt 0 basicarraydimensions, doc (showString ")")])
+    IFArray id basicarraydimensions -> prPrec i 0 (concatD [doc (showString "size"), doc (showString "("), prt 0 id, prt 0 basicarraydimensions, doc (showString ")")])
     IFFLoat expr -> prPrec i 0 (concatD [doc (showString "float"), doc (showString "("), prt 0 expr, doc (showString ")")])
     IFFloor expr -> prPrec i 0 (concatD [doc (showString "floor"), doc (showString "("), prt 0 expr, doc (showString ")")])
     IFCeil expr -> prPrec i 0 (concatD [doc (showString "ceil"), doc (showString "("), prt 0 expr, doc (showString ")")])

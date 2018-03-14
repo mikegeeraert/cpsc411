@@ -133,7 +133,7 @@ data Mulop = MMul | MDiv
 
 data Int_Factor
     = IFPar Expr
-    | IFArray Basic_Array_Dimensions
+    | IFArray Ident Basic_Array_Dimensions
     | IFFLoat Expr
     | IFFloor Expr
     | IFCeil Expr

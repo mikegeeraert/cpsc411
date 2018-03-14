@@ -151,30 +151,38 @@ transMulop x = case x of
 
 transInt_Factor :: Int_Factor -> A.M_expr
 transInt_Factor x = case x of
-  IFPar expr -> failure x
-  IFArray basicarraydimensions -> failure x
-  IFFLoat expr -> failure x
-  IFFloor expr -> failure x
-  IFCeil expr -> failure x
-  IFModList ident modifierlist -> failure x
-  IFInt integer -> failure x
-  IFReal double -> failure x
-  IFTrue -> failure x
-  IFFalse -> failure x
-  IFNeg intfactor -> failure x
+  IFPar expr -> transExpr expr
+  IFArray ident basicarraydimensions -> A.M_Size(ident, (transBasic_Array_Dimensions basicarraydimensions))
+  IFFLoat expr -> A.M_app(A.M_float, [transExpr expr])
+  IFFloor expr -> A.M_app(A.M_floor, [transExpr expr])
+  IFCeil expr -> A.M_app(A.M_ceil, [transExpr expr])
+  IFModList ident modifierlist ->  transIdent_Modifier_List (ident, modifierlist)
+  IFInt integer -> A.M_ival integer
+  IFReal double -> A.M_rval double
+  IFTrue -> A.M_bval True
+  IFFalse -> A.M_bval False
+  IFNeg intfactor -> A.M_app(A.M_neg, [transInt_Factor intfactor])
 
-transModifier_List :: Modifier_List -> Result
+transModifier_List :: Modifier_List -> [A.M_expr]
 transModifier_List x = case x of
-  MLArgs arguments -> failure x
-  MLArray arraydimensions -> failure x
+  MLArgs arguments -> transArguments arguments
+  MLArray arraydimensions -> transArray_Dimensions arraydimensions
 
-transArguments :: Arguments -> Result
+transArguments :: Arguments -> [A.M_expr]
 transArguments x = case x of
-  AExpr expr morearguments -> failure x
-  AEmpty -> failure x
+  AExpr expr morearguments -> (transExpr expr : transMore_Arguments morearguments)
+  AEmpty -> []
 
-transMore_Arguments :: More_Arguments -> Result
+transMore_Arguments :: More_Arguments -> [A.M_expr]
 transMore_Arguments x = case x of
-  MAComma expr morearguments -> failure x
-  MAEmpty -> failure x
+  MAComma expr morearguments -> (transExpr expr : transMore_Arguments morearguments)
+  MAEmpty -> []
+
+transIdent_Modifier_List :: (String, Modifier_List) -> A.M_expr
+transIdent_Modifier_List x = case x of
+   (ident, MLArgs arguments) -> A.M_app(M_fn ident, transArguments arguments)
+   (ident, MLArray arraydimensions) -> A.M_id(ident, transArray_Dimensions arraydimensions)
+
+
+
 

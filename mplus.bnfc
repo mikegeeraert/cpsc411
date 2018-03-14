@@ -181,7 +181,7 @@ MMul.	Mulop ::= "*" ;
 MDiv.	Mulop ::= "/" ;
 
 IFPar.	Int_Factor ::= "(" Expr ")" ;
-IFArray.Int_Factor ::= "size" "(" Basic_Array_Dimensions ")" ;
+IFArray.Int_Factor ::= "size" "(" Ident Basic_Array_Dimensions ")" ;
 IFFLoat.Int_Factor ::= "float" "(" Expr ")" ;
 IFFloor.Int_Factor ::= "floor" "(" Expr ")" ;
 IFCeil. Int_Factor ::= "ceil" "(" Expr ")" ;
