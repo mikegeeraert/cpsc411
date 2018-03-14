@@ -166,10 +166,11 @@ transInt_Factor x = case x of
   IFFalse -> A.M_bval False
   IFNeg intfactor -> A.M_app(A.M_neg, [transInt_Factor intfactor])
 
-transModifier_List :: Modifier_List -> [A.M_expr]
-transModifier_List x = case x of
-  MLArgs arguments -> transArguments arguments
-  MLArray arraydimensions -> transArray_Dimensions arraydimensions
+
+transIdent_Modifier_List :: (Ident, Modifier_List) -> A.M_expr
+transIdent_Modifier_List (x, y) = case (x, y) of
+  (ident, MLArgs arguments) -> A.M_app((A.M_fn (transIdent ident)), transArguments arguments)
+  (ident, MLArray arraydimensions) -> A.M_id(transIdent ident, transArray_Dimensions arraydimensions)
 
 transArguments :: Arguments -> [A.M_expr]
 transArguments x = case x of
@@ -180,9 +181,4 @@ transMore_Arguments :: More_Arguments -> [A.M_expr]
 transMore_Arguments x = case x of
   MAComma expr morearguments -> (transExpr expr : transMore_Arguments morearguments)
   MAEmpty -> []
-
-transIdent_Modifier_List :: (Ident, Modifier_List) -> A.M_expr
-transIdent_Modifier_List (x, y) = case (x, y) of
-  (ident, MLArgs arguments) -> A.M_app((A.M_fn (transIdent ident)), transArguments arguments)
-  (ident, MLArray arraydimensions) -> A.M_id(transIdent ident, transArray_Dimensions arraydimensions)
   
