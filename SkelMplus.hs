@@ -48,106 +48,108 @@ transArray_Dimensions x = case x of
 
 transFun_Declaration :: Fun_Declaration -> A.M_decl
 transFun_Declaration x = case x of
-  FDDec ident paramlist type_ funblock -> M_fun (ident, [transParam_List paramlist], transType type_, fst(transFun_Block funblock), snd(transFun_Block funblock))
+  FDDec ident paramlist type_ funblock -> M_fun (ident, transParam_List paramlist, transType type_, fst(transFun_Block funblock), snd(transFun_Block funblock))
 
 transFun_Block :: Fun_Block -> ([A.M_decl], [A.M_stmt])
 transFun_Block x = case x of
   FB declarations funbody -> (transDeclarations declarations, transFun_Body funbody)
 
-transParam_List :: Param_List -> Result
+transParam_List :: Param_List -> [(String, Int, A.M_type)]
 transParam_List x = case x of
-  PL parameters -> failure x
+  PL parameters -> transParameters parameters
 
-transParameters :: Parameters -> Result
+transParameters :: Parameters -> [(String, Int, A.M_type)]
 transParameters x = case x of
-  PParams basicdeclaration moreparameters -> failure x
+  PParams basicdeclaration moreparameters -> (transBasic_Declaration basicdeclaration : transMore_Parameters moreparameters)
   PEmpty -> failure x
 
-transMore_Parameters :: More_Parameters -> Result
+transMore_Parameters :: More_Parameters -> [(String, Int, A.M_type)]
 transMore_Parameters x = case x of
-  MPMore basicdeclaration moreparameters -> failure x
+  MPMore basicdeclaration moreparameters -> (transBasic_Declaration basicdeclaration : transMore_Parameters moreparameters)
   MPEmpty -> failure x
 
-transBasic_Declaration :: Basic_Declaration -> Result
+transBasic_Declaration :: Basic_Declaration -> (String, Int, A.M_type)
 transBasic_Declaration x = case x of
-  BDBasic ident basicarraydimensions type_ -> failure x
+  BDBasic ident basicarraydimensions type_ -> (ident, transBasic_Array_Dimensions basicarraydimensions, transType type_)
 
-transBasic_Array_Dimensions :: Basic_Array_Dimensions -> Result
+transBasic_Array_Dimensions :: Basic_Array_Dimensions -> Int
 transBasic_Array_Dimensions x = case x of
-  BAD basicarraydimensions -> failure x
-  BADEmpty -> failure x
+  BAD basicarraydimensions -> 0 --figure out what this needs to be... should '[][]'' be 2? should '[]' be 1?
+  BADEmpty -> 0
 
-transProgram_Body :: Program_Body -> Result
+transProgram_Body :: Program_Body -> [A.M_stmt]
 transProgram_Body x = case x of
-  PBBody progstmts -> failure x
+  PBBody progstmts -> transProg_Stmts progstmts
 
-transFun_Body :: Fun_Body -> Result
+transFun_Body :: Fun_Body -> [A.M_stmt]
 transFun_Body x = case x of
-  FBBody progstmts expr -> failure x
+  FBBody progstmts expr -> transProg_Stmts progstmts ++ [A.M_return (transExpr Expr)] -- Try Dot Notation here
 
-transProg_Stmts :: Prog_Stmts -> Result
+transProg_Stmts :: Prog_Stmts -> [A.M_stmt]
 transProg_Stmts x = case x of
-  PSSemi progstmt progstmts -> failure x
-  PSEmpty -> failure x
+  PSSemi progstmt progstmts -> (transProg_Stmt progstmt : transProg_Stmts progstmts)
+  PSEmpty -> []
 
-transProg_Stmt :: Prog_Stmt -> Result
+transProg_Stmt :: Prog_Stmt -> A.M_stmt
 transProg_Stmt x = case x of
-  PSITE expr progstmt1 progstmt2 -> failure x
-  PSWhile expr progstmt -> failure x
-  PSRead identifier -> failure x
-  PSAssign identifier expr -> failure x
-  PSPrint expr -> failure x
-  PSCPar block -> failure x
+  PSITE expr progstmt1 progstmt2 -> A.M_cond (transExpr expr, transProg_Stmt progstmt1, transProg_Stmt progstmt2)
+  PSWhile expr progstmt -> A.M_while (transExpr expr, transProg_Stmt progstmt)
+  PSRead identifier -> A.M_read (transIdentifier identifier)
+  PSAssign identifier expr -> A.M_ass (fst(transIdentifier identifier), snd(transIdentifier identifier), transExpr expr)
+  PSPrint expr -> A.M_print (transExpr expr)
+  PSCPar block -> A.M_block (transBlock block)
 
-transIdentifier :: Identifier -> Result
+transIdentifier :: Identifier -> (String, [M_expr])
 transIdentifier x = case x of
-  ID ident arraydimensions -> failure x
+  ID ident arraydimensions -> (ident, transArray_Dimensions arraydimensions)
 
-transExpr :: Expr -> Result
+transExpr :: Expr -> A.M_expr
 transExpr x = case x of
-  EOr expr bintterm -> failure x
-  EBint bintterm -> failure x
+  EOr expr bintterm -> A.M_app (A.M_or, [(transExpr expr), (transBint_Term bintterm)])
+  EBint bintterm -> transBint_Term bintterm
 
-transBint_Term :: Bint_Term -> Result
+transBint_Term :: Bint_Term -> A.M_expr
 transBint_Term x = case x of
-  BTAnd bintterm bintfactor -> failure x
-  BTFactor bintfactor -> failure x
+  BTAnd bintterm bintfactor -> A.M_app (A.M_and, [(transBint_Term bintterm), (transBint_Factor bintfactor)] )
+  BTFactor bintfactor -> transBint_Factor bintfactor
 
-transBint_Factor :: Bint_Factor -> Result
+transBint_Factor :: Bint_Factor -> A.M_Expr
 transBint_Factor x = case x of
-  BFNot bintfactor -> failure x
-  BFComp intexpr1 compareop intexpr2 -> failure x
-  BFExpr intexpr -> failure x
+  BFNot bintfactor -> A.M_app (A.M_not, [transBint_Factor bintfactor])
+  BFComp intexpr1 compareop intexpr2 -> A.M_app (transCompare_Op compareop, [(transInt_Expr intexpr1), (transInt_Expr intexpr2)])
+  BFExpr intexpr -> transInt_Expr intexpr
 
-transCompare_Op :: Compare_Op -> Result
+transCompare_Op :: Compare_Op -> A.M_operation
 transCompare_Op x = case x of
-  COEq -> failure x
-  COLt -> failure x
-  COGt -> failure x
-  COLe -> failure x
-  COGe -> failure x
+  COEq -> A.M_eq
+  COLt -> A.M_lt
+  COGt -> A.M_gt
+  COLe -> A.M_le
+  COGe -> A.M_ge
 
-transInt_Expr :: Int_Expr -> Result
+transInt_Expr :: Int_Expr -> A.M_expr
 transInt_Expr x = case x of
-  IEAddop intexpr addop intterm -> failure x
-  IETerm intterm -> failure x
+  --Figure out the ordering of term/factor
+  IEAddop intexpr addop intterm -> A.M_app((transAddop addop), [(transInt_Expr intexpr), (transInt_Term intterm)])
+  IETerm intterm -> transInt_Term intterm
 
-transAddop :: Addop -> Result
+transAddop :: Addop -> A.M_operation
 transAddop x = case x of
-  AAdd -> failure x
-  ASub -> failure x
+  AAdd -> A.M_add
+  ASub -> A.M_sub
 
-transInt_Term :: Int_Term -> Result
+transInt_Term :: Int_Term -> A.M_expr
 transInt_Term x = case x of
-  ITMul intterm mulop intfactor -> failure x
-  ITFactor intfactor -> failure x
+  --figure out the ordering of term/factor
+  ITMul intterm mulop intfactor -> A.M_app((transMulop mulop), [(transInt_Term term), (transInt_Factor intfactor)])
+  ITFactor intfactor -> transInt_Factor intfactor
 
-transMulop :: Mulop -> Result
+transMulop :: Mulop -> A.M_operation
 transMulop x = case x of
-  MMul -> failure x
-  MDiv -> failure x
+  MMul -> A.M_mul
+  MDiv -> A.M_div
 
-transInt_Factor :: Int_Factor -> Result
+transInt_Factor :: Int_Factor -> A.M_expr
 transInt_Factor x = case x of
   IFPar expr -> failure x
   IFArray basicarraydimensions -> failure x
