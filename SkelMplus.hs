@@ -77,7 +77,7 @@ transBasic_Declaration x = case x of
 
 transBasic_Array_Dimensions :: Basic_Array_Dimensions -> Int
 transBasic_Array_Dimensions x = case x of
-  BAD basicarraydimensions -> 0 --figure out what this needs to be... should '[][]'' be 2? should '[]' be 1?
+  BAD basicarraydimensions -> (transBasic_Array_Dimensions basicarraydimensions) + 1 --figure out what this needs to be... should '[][]'' be 2? should '[]' be 1?
   BADEmpty -> 0
 
 transProgram_Body :: Program_Body -> [A.M_stmt]
