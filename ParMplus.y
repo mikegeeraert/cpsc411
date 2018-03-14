@@ -43,24 +43,24 @@ import ErrM
 %monad { Err } { thenM } { returnM }
 %tokentype {Token}
 %token
-  '(' { PT _ (TS _ 1) }
-  ')' { PT _ (TS _ 2) }
-  '*' { PT _ (TS _ 3) }
-  '+' { PT _ (TS _ 4) }
-  ',' { PT _ (TS _ 5) }
-  '-' { PT _ (TS _ 6) }
-  '/' { PT _ (TS _ 7) }
-  ':' { PT _ (TS _ 8) }
-  ':=' { PT _ (TS _ 9) }
-  ';' { PT _ (TS _ 10) }
-  '<' { PT _ (TS _ 11) }
-  '=' { PT _ (TS _ 12) }
-  '=<' { PT _ (TS _ 13) }
-  '>' { PT _ (TS _ 14) }
-  '>=' { PT _ (TS _ 15) }
-  '[' { PT _ (TS _ 16) }
-  ']' { PT _ (TS _ 17) }
-  'and' { PT _ (TS _ 18) }
+  '&&' { PT _ (TS _ 1) }
+  '(' { PT _ (TS _ 2) }
+  ')' { PT _ (TS _ 3) }
+  '*' { PT _ (TS _ 4) }
+  '+' { PT _ (TS _ 5) }
+  ',' { PT _ (TS _ 6) }
+  '-' { PT _ (TS _ 7) }
+  '/' { PT _ (TS _ 8) }
+  ':' { PT _ (TS _ 9) }
+  ':=' { PT _ (TS _ 10) }
+  ';' { PT _ (TS _ 11) }
+  '<' { PT _ (TS _ 12) }
+  '=' { PT _ (TS _ 13) }
+  '=<' { PT _ (TS _ 14) }
+  '>' { PT _ (TS _ 15) }
+  '>=' { PT _ (TS _ 16) }
+  '[' { PT _ (TS _ 17) }
+  ']' { PT _ (TS _ 18) }
   'begin' { PT _ (TS _ 19) }
   'bool' { PT _ (TS _ 20) }
   'ceil' { PT _ (TS _ 21) }
@@ -74,17 +74,17 @@ import ErrM
   'if' { PT _ (TS _ 29) }
   'int' { PT _ (TS _ 30) }
   'not' { PT _ (TS _ 31) }
-  'or' { PT _ (TS _ 32) }
-  'print' { PT _ (TS _ 33) }
-  'read' { PT _ (TS _ 34) }
-  'real' { PT _ (TS _ 35) }
-  'return' { PT _ (TS _ 36) }
-  'size' { PT _ (TS _ 37) }
-  'then' { PT _ (TS _ 38) }
-  'true' { PT _ (TS _ 39) }
-  'var' { PT _ (TS _ 40) }
-  'while' { PT _ (TS _ 41) }
-  '{' { PT _ (TS _ 42) }
+  'print' { PT _ (TS _ 32) }
+  'read' { PT _ (TS _ 33) }
+  'real' { PT _ (TS _ 34) }
+  'return' { PT _ (TS _ 35) }
+  'size' { PT _ (TS _ 36) }
+  'then' { PT _ (TS _ 37) }
+  'true' { PT _ (TS _ 38) }
+  'var' { PT _ (TS _ 39) }
+  'while' { PT _ (TS _ 40) }
+  '{' { PT _ (TS _ 41) }
+  '||' { PT _ (TS _ 42) }
   '}' { PT _ (TS _ 43) }
 
 L_ident  { PT _ (TV $$) }
@@ -151,10 +151,10 @@ Prog_Stmt : 'if' Expr 'then' Prog_Stmt 'else' Prog_Stmt { AbsMplus.PSITE $2 $4 $
 Identifier :: { Identifier }
 Identifier : Ident Array_Dimensions { AbsMplus.ID $1 $2 }
 Expr :: { Expr }
-Expr : Expr 'or' Bint_Term { AbsMplus.EOr $1 $3 }
+Expr : Expr '||' Bint_Term { AbsMplus.EOr $1 $3 }
      | Bint_Term { AbsMplus.EBint $1 }
 Bint_Term :: { Bint_Term }
-Bint_Term : Bint_Term 'and' Bint_Factor { AbsMplus.BTAnd $1 $3 }
+Bint_Term : Bint_Term '&&' Bint_Factor { AbsMplus.BTAnd $1 $3 }
           | Bint_Factor { AbsMplus.BTFactor $1 }
 Bint_Factor :: { Bint_Factor }
 Bint_Factor : 'not' Bint_Factor { AbsMplus.BFNot $2 }

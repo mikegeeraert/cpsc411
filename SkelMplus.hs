@@ -185,7 +185,4 @@ transIdent_Modifier_List :: (Ident, Modifier_List) -> A.M_expr
 transIdent_Modifier_List (x, y) = case (x, y) of
   (ident, MLArgs arguments) -> A.M_app((A.M_fn (transIdent ident)), transArguments arguments)
   (ident, MLArray arraydimensions) -> A.M_id(transIdent ident, transArray_Dimensions arraydimensions)
-
-
-
-
+  

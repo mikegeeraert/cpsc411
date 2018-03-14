@@ -110,7 +110,7 @@ All other symbols are terminals.
   | //Mulop// | -> | ``*`` 
   |  |  **|**  | ``/`` 
   | //Int_Factor// | -> | ``(`` //Expr// ``)`` 
-  |  |  **|**  | ``size`` ``(`` //Basic_Array_Dimensions// ``)`` 
+  |  |  **|**  | ``size`` ``(`` //Ident// //Basic_Array_Dimensions// ``)`` 
   |  |  **|**  | ``float`` ``(`` //Expr// ``)`` 
   |  |  **|**  | ``floor`` ``(`` //Expr// ``)`` 
   |  |  **|**  | ``ceil`` ``(`` //Expr// ``)`` 

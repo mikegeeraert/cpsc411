@@ -179,12 +179,12 @@ instance Print Identifier where
 
 instance Print Expr where
   prt i e = case e of
-    EOr expr bintterm -> prPrec i 0 (concatD [prt 0 expr, doc (showString "or"), prt 0 bintterm])
+    EOr expr bintterm -> prPrec i 0 (concatD [prt 0 expr, doc (showString "||"), prt 0 bintterm])
     EBint bintterm -> prPrec i 0 (concatD [prt 0 bintterm])
 
 instance Print Bint_Term where
   prt i e = case e of
-    BTAnd bintterm bintfactor -> prPrec i 0 (concatD [prt 0 bintterm, doc (showString "and"), prt 0 bintfactor])
+    BTAnd bintterm bintfactor -> prPrec i 0 (concatD [prt 0 bintterm, doc (showString "&&"), prt 0 bintfactor])
     BTFactor bintfactor -> prPrec i 0 (concatD [prt 0 bintfactor])
 
 instance Print Bint_Factor where
