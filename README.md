@@ -13,7 +13,7 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
  - May work with a more basic Haskell installation but I haven't personally tested it
  - The Haskell installation you use **must** include Alex and Happy
 
-## Running and Compiling the Compiler:
+## Downloading and Making the FrontEnd:
 
  1. Download this repo either as a zip or by running: 
  	`git clone https://github.com/mikegeeraert/cpsc411.git`
