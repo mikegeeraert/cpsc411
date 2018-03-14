@@ -152,10 +152,10 @@ PSCPar. Prog_Stmt ::= "{" Block "}" ;
 
 ID. 	Identifier ::= Ident Array_Dimensions ;
 
-EOr.	Expr ::= Expr "or" Bint_Term ;
+EOr.	Expr ::= Expr "||" Bint_Term ;
 EBint.	Expr ::= Bint_Term ;
 
-BTAnd.	Bint_Term ::= Bint_Term "and" Bint_Factor ;
+BTAnd.	Bint_Term ::= Bint_Term "&&" Bint_Factor ;
 BTFactor.Bint_Term ::= Bint_Factor ;
 
 BFNot.	Bint_Factor ::= "not" Bint_Factor ;
