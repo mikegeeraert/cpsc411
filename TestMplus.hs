@@ -27,10 +27,10 @@ type Verbosity = Int
 putStrV :: Verbosity -> String -> IO ()
 putStrV v s = when (v > 1) $ putStrLn s
 
-runFile :: (Print a, Show a) => Verbosity -> ParseFun a -> FilePath -> IO ()
+runFile :: Verbosity -> ParseFun Start -> FilePath -> IO ()
 runFile v p f = putStrLn f >> readFile f >>= run v p
 
-run :: (Print a, Show a) => Verbosity -> ParseFun a -> String -> IO ()
+run :: Verbosity -> ParseFun Start -> String -> IO ()
 run v p s = let ts = myLLexer s in case p ts of
            Bad s    -> do putStrLn "\nParse              Failed...\n"
                           putStrV v "Tokens:"
@@ -43,11 +43,13 @@ run v p s = let ts = myLLexer s in case p ts of
                           exitSuccess
 
 
-showTree :: (Show a, Print a) => Int -> a -> IO ()
+showTree :: Int -> Start -> IO ()
 showTree v tree
  = do
-      putStrV v $ "\n[Abstract Syntax]\n\n" ++ show tree
-      putStrV v $ "\n[Linearized tree]\n\n" ++ printTree tree
+      -- putStrV v $ "\n[Abstract Syntax]\n\n" ++ show tree
+      -- putStrV v $ "\n[Linearized tree]\n\n" ++ printTree tree
+      putStrV v $ "\n[Abstrac Syntax]\n\n" ++ show (transStart tree)
+      putStrV v $ "\n[Linearized tree]\n\n" ++ show (transStart tree)
 
 usage :: IO ()
 usage = do
