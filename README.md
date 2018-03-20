@@ -9,11 +9,11 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 
 ## Requirements
 
- 1. Haskell Platform: https://www.haskell.org/downloads#platform
+ 1. [Haskell Platform](https://www.haskell.org/downloads#platform)
  - May work with a more basic Haskell installation but I haven't personally tested it
  - The Haskell installation you use **must** include Alex and Happy
 
- 2. GenericPretty package
+ 2. [GenericPretty](https://hackage.haskell.org/package/text-generic-pretty) package
  - This library is used for pretty printing the AST to the terminal
  - Install using cabal: 
  	`cabal install GenericPretty`
