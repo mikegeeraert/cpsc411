@@ -6,12 +6,16 @@ import System.IO ( stdin, hGetContents )
 import System.Environment ( getArgs, getProgName )
 import System.Exit ( exitFailure, exitSuccess )
 import Control.Monad (when)
+import Data.Text
+import Text.PrettyPrint.GenericPretty
+
 
 import LexMplus
 import ParMplus
 import SkelMplus
 import PrintMplus
 import AbsMplus
+import AST (prettyPrint)
 
 
 
@@ -31,7 +35,7 @@ runFile :: Verbosity -> ParseFun Start -> FilePath -> IO ()
 runFile v p f = putStrLn f >> readFile f >>= run v p
 
 run :: Verbosity -> ParseFun Start -> String -> IO ()
-run v p s = let ts = myLLexer s in case p ts of
+run v p s  = let ts = myLLexer s in case p ts of
            Bad s    -> do putStrLn "\nParse              Failed...\n"
                           putStrV v "Tokens:"
                           putStrV v $ show ts
@@ -39,21 +43,19 @@ run v p s = let ts = myLLexer s in case p ts of
                           exitFailure
            Ok  tree -> do putStrLn "\nParse Successful!"
                           showTree v tree
-
+                          writeFile "Output.txt" (show (transStart tree))
                           exitSuccess
 
 
 showTree :: Int -> Start -> IO ()
 showTree v tree
  = do
-      -- putStrV v $ "\n[Abstract Syntax]\n\n" ++ show tree
-      -- putStrV v $ "\n[Linearized tree]\n\n" ++ printTree tree
-      putStrV v $ "\n[Abstrac Syntax]\n\n" ++ show (transStart tree)
-      putStrV v $ "\n[Linearized tree]\n\n" ++ show (transStart tree)
+      putStrV v $ "\n[Abstrac Syntax Tree]\n\n"
+      prettyPrint (transStart tree)
 
 usage :: IO ()
 usage = do
-  putStrLn $ unlines
+  putStrLn $ Prelude.unlines
     [ "usage: Call with one of the following argument combinations:"
     , "  --help          Display this help message."
     , "  (no arguments)  Parse stdin verbosely."
