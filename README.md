@@ -35,11 +35,11 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 
   ## Testing Files
 
-  1. "test<number>.txt" files
+  1. "test{{number}}.txt" files
   - All these files have been pulled off Dr. Cockett's website. All of the tests should succeed the lexing + parsing steps, excpet test15.txt, which contains a syntax error
-  
+
   2. "fib.txt", "sumarray.txt", "exp.txt" files
   - These files are also examples of real M+ programs that have been pulled off Dr. Cockett's website. These should all compile
 
-  2. "mytest<number>.txt" files
+  2. "mytest{{number}}.txt" files
   - All of these files contain syntax errors and should fail during lexing/parsing. The reasons for the failures are at the top of each test file in a comment. 
