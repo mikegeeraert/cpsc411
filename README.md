@@ -13,6 +13,11 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
  - May work with a more basic Haskell installation but I haven't personally tested it
  - The Haskell installation you use **must** include Alex and Happy
 
+ 2. GenericPretty package
+ - This library is used for pretty printing the AST to the terminal
+ - Install using cabal: 
+ 	`cabal install GenericPretty`
+
 ## Downloading and Making the compiler front end:
 
  1. Download this repo either as a zip or by running: 
@@ -20,9 +25,10 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
  	in a directory of your choosing
  	*or*
  	Download the zip and unpack to a directory of your choosing 
- 2. Navigate to the top level directory ie -> `youDirectory/cpsc411/`
+ 2. Navigate to the top level directory ie -> `yourDirectory/cpsc411/`
 
  3. run `make` to compile the ParMplus.y parser, as well as the LexMplus.x lexer
 
- 4. test the compiler using `./TestMplus *inputfile.txt* *outputfile.txt*`
+ 4. test the compiler using `./TestMplus *inputfile.txt*`
   - there are many tests in the `cpsc411/tests/` directory which have been downloaded from Dr. Cockett's website
+  - The AST is pretty printed to the screen and written to an output file called "Output.txt" in the same directory
