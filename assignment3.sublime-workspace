@@ -4,6 +4,90 @@
 		"selected_items":
 		[
 			[
+				"transIde",
+				"transIdent_Modifier_List"
+			],
+			[
+				"m",
+				"morearguments"
+			],
+			[
+				"transAr",
+				"transArray_Dimensions"
+			],
+			[
+				"mod",
+				"modifierlist"
+			],
+			[
+				"intexp",
+				"intexpr"
+			],
+			[
+				"intex",
+				"intexpr"
+			],
+			[
+				"int",
+				"intexpr2"
+			],
+			[
+				"inte",
+				"intexpr1"
+			],
+			[
+				"trans",
+				"transCompare_Op"
+			],
+			[
+				"bint",
+				"bintfactor"
+			],
+			[
+				"id",
+				"identifier"
+			],
+			[
+				"pro",
+				"progstmt"
+			],
+			[
+				"pr",
+				"progstmts"
+			],
+			[
+				"transPro",
+				"transProg_Stmt"
+			],
+			[
+				"transPr",
+				"transProg_Stmts"
+			],
+			[
+				"transBas",
+				"transBasic_Array_Dimensions"
+			],
+			[
+				"transPa",
+				"transParameters"
+			],
+			[
+				"transF",
+				"transFun_Body"
+			],
+			[
+				"transA",
+				"transArray_Dimensions"
+			],
+			[
+				"M_",
+				"M_decl"
+			],
+			[
+				"decla",
+				"declarations"
+			],
+			[
 				"Int",
 				"Int_Factor"
 			],
@@ -183,98 +267,6 @@
 	},
 	"buffers":
 	[
-		{
-			"contents": "comment \"%\" ;\ncomment \"/*\" \"*/\";\n\n\n{-\nprog -> block\n\nblock -> declarations program_body.\n\ndeclarations -> declaration SEMICOLON declarations\n             |.\n\ndeclaration -> var_declaration\n             | fun_declaration.\n\nvar_declaration -> VAR ID array_dimensions COLON type.\n\ntype -> INT\n      | REAL\n      | BOOL. \n\narray_dimensions -> SLPAR expr SRPAR array_dimensions\n             |.\n\nfun_declaration -> FUN ID param_list COLON type  \n                                            CLPAR fun_block CRPAR.\n\nfun_block -> declarations fun_body. \n\nparam_list -> LPAR parameters RPAR.\n\nparameters -> basic_declaration more_parameters\n            |.\n\nmore_parameters -> COMMA  basic_declaration more_parameters\n            |.\n\nbasic_declaration -> ID basic_array_dimensions COLON type.\n\nbasic_array_dimensions -> SLPAR SRPAR basic_array_dimensions\n             |.\n\nprogram_body -> BEGIN prog_stmts END.\n\nfun_body -> BEGIN prog_stmts RETURN expr SEMICOLON END.\n\nprog_stmts -> prog_stmt SEMICOLON prog_stmts\n            |.                         \n                                        \nprog_stmt -> IF expr THEN prog_stmt ELSE prog_stmt\n           | WHILE expr DO prog_stmt\n           | READ identifier\n           | identifier ASSIGN expr\n           | PRINT expr\n           | CLPAR block CRPAR.\n\nidentifier -> ID array_dimensions.\n\nexpr ->  expr OR bint_term\n       | bint_term.\n\nbint_term -> bint_term AND bint_factor\n           | bint_factor.\n\nbint_factor -> NOT bint_factor\n             | int_expr compare_op int_expr\n             | int_expr.\n\ncompare_op -> EQUAL | LT | GT | LE |GE.\n\nint_expr -> int_expr addop int_term\n          | int_term.\n\naddop -> ADD | SUB.\n\nint_term -> int_term mulop int_factor\n          | int_factor.\n\nmulop -> MUL | DIV.\n\nint_factor -> LPAR expr RPAR\n            | SIZE LPAR ID basic_array_dimensions RPAR\n            | FLOAT LPAR expr RPAR\n            | FLOOR LPAR expr RPAR\n            | CEIL LPAR expr RPAR\n            | ID modifier_list\n            | IVAL\n            | RVAL\n            | BVAL\n            | SUB int_factor.\n\nmodifier_list -> LPAR arguments RPAR\n           | array_dimensions.\n\narguments -> expr more_arguments\n           |.\n\nmore_arguments -> COMMA expr more_arguments\n           |.\n-}\n\nSTART.  Start ::= Block;\n\nBProg.  Block ::= Declarations Program_Body;\n\nDSemi.  Declarations ::= Declaration \";\" Declarations ;\nDEmpty. Declarations ::= ;\n\nDVar.   Declaration ::= Var_Declaration ;\nDFun.   Declaration ::= Fun_Declaration ;\n\nVD.     Var_Declaration ::= \"var\" Ident Array_Dimensions \":\" Type ;\n\nTInt.   Type ::= \"int\" ;\nTReal.  Type ::= \"real\" ;\nTBool.  Type ::= \"bool\" ;\n\nADExpr. Array_Dimensions ::= \"[\" Expr \"]\" Array_Dimensions ;\nADEmpty.Array_Dimensions ::= ;\n\nFDDec.  Fun_Declaration ::= \"fun\" Ident Param_List \":\" Type \"{\" Fun_Block \"}\" ;\n\nFB.     Fun_Block ::= Declarations Fun_Body ;\n\nPL.     Param_List ::= \"(\" Parameters \")\" ;\n\nPParams.Parameters ::= Basic_Declaration More_Parameters ;\nPEmpty. Parameters ::= ;\n\nMPMore. More_Parameters ::= \",\" Basic_Declaration More_Parameters ;\nMPEmpty.More_Parameters ::= ;\n\nBDBasic.Basic_Declaration ::= Ident Basic_Array_Dimensions \":\" Type ;\n\nBAD.    Basic_Array_Dimensions ::= \"[\" \"]\" Basic_Array_Dimensions ;\nBADEmpty.Basic_Array_Dimensions ::= ;\n\nPBBody. Program_Body ::= \"begin\" Prog_Stmts \"end\" ;\n\nFBBody. Fun_Body ::= \"begin\" Prog_Stmts \"return\" Expr \";\" \"end\" ;\n\nPSSemi. Prog_Stmts ::= Prog_Stmt \";\" Prog_Stmts ;\nPSEmpty.Prog_Stmts ::= ;\n\nPSITE.  Prog_Stmt ::= \"if\" Expr \"then\" Prog_Stmt \"else\" Prog_Stmt ;\nPSWhile.Prog_Stmt ::= \"while\" Expr \"do\" Prog_Stmt ;\nPSRead. Prog_Stmt ::= \"read\" Identifier ;\nPSAssign.Prog_Stmt ::= Identifier \":=\" Expr ;\nPSPrint.Prog_Stmt ::= \"print\" Expr ;\nPSCPar. Prog_Stmt ::= \"{\" Block \"}\" ;\n\n\nID. \tIdentifier ::= Ident Array_Dimensions ;\n\nEOr.\tExpr ::= Expr \"or\" Bint_Term ;\nEBint.\tExpr ::= Bint_Term ;\n\nBTAnd.\tBint_Term ::= Bint_Term \"and\" Bint_Factor ;\nBTFactor.Bint_Term ::= Bint_Factor ;\n\nBFNot.\tBint_Factor ::= \"not\" Bint_Factor ;\nBFComp. Bint_Factor ::= Int_Expr Compare_Op Int_Expr ;\nBFExpr. Bint_Factor ::= Int_Expr ;\n\nCOEq.\tCompare_Op ::= \"=\" ;\nCOLt.\tCompare_Op ::= \"<\" ;\nCOGt.\tCompare_Op ::= \">\" ;\nCOLe.\tCompare_Op ::= \"=<\" ;\nCOGe.\tCompare_Op ::= \">=\" ;\n\nIEAddop.Int_Expr ::= Int_Expr Addop Int_Term ;\nIETerm.\tInt_Expr ::= Int_Term ;\n\nAAdd. \tAddop ::= \"+\" ;\nASub.\tAddop ::= \"-\" ;\n\nITMul.\tInt_Term ::= Int_Term Mulop Int_Factor ;\nITFactor.Int_Term ::= Int_Factor;\n\nMMul.\tMulop ::= \"*\" ;\nMDiv.\tMulop ::= \"/\" ;\n\nIFPar.\tInt_Factor ::= \"(\" Expr \")\" ;\nIFArray.Int_Factor ::= \"size\" \"(\" Basic_Array_Dimensions \")\" ;\nIFFLoat.Int_Factor ::= \"float\" \"(\" Expr \")\" ;\nIFFloor.Int_Factor ::= \"floor\" \"(\" Expr \")\" ;\nIFCeil. Int_Factor ::= \"ceil\" \"(\" Expr \")\" ;\nIFModList.Int_Factor ::= Ident Modifier_List ;\nIFInt.\tInt_Factor ::= Integer ;\nIFReal. Int_Factor ::= Double ;\nIFTrue. Int_Factor ::= \"true\" ;\nIFFalse.Int_Factor ::= \"false\" ;\n\n\nMLArgs. Modifier_List ::= \"(\" Arguments \")\" ;\nMLArray.Modifier_List ::= Array_Dimensions ;\n\nAExpr.  Arguments ::= Expr More_Arguments ;\nAEmpty. Arguments ::= ;\n\nMAComma.More_Arguments ::= \",\" Expr More_Arguments ;\nMAEmpty.More_Arguments ::= ;",
-			"file": "mplus.bnfc",
-			"file_size": 5210,
-			"file_write_time": 131654528654975379,
-			"settings":
-			{
-				"buffer_size": 5115,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "AbsMplus.hs",
-			"settings":
-			{
-				"buffer_size": 3176,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "SkelMplus.hs",
-			"settings":
-			{
-				"buffer_size": 4743,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "DocMplus.txt",
-			"settings":
-			{
-				"buffer_size": 5351,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "TestMplus.hs",
-			"settings":
-			{
-				"buffer_size": 1928,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "ParMplus.y",
-			"settings":
-			{
-				"buffer_size": 7570,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "LexMplus.x",
-			"settings":
-			{
-				"buffer_size": 6064,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Makefile",
-			"settings":
-			{
-				"buffer_size": 326,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "ErrM.hs",
-			"settings":
-			{
-				"buffer_size": 796,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "LayoutMplus.hs",
-			"settings":
-			{
-				"buffer_size": 9657,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "PrintMplus.hs",
-			"settings":
-			{
-				"buffer_size": 10139,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -313,12 +305,53 @@
 	},
 	"file_history":
 	[
+		"/Users/michaelgeeraert/Projects/cpsc411/SkelMplus.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/exp.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test1.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test2.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test3.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test4.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test5.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test6.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test7.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test8.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test9.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test11.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/README.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/README.md",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test10.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test12.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test13.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test14.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test15.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/test16.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/fib.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/sumarray.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/mmatrix.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/TestMplus.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/mplus.bnfc",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/mytest2.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/mytest1.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/AbsMplus.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/mytest3.txt",
+		"/Users/michaelgeeraert/Projects/cpsc411/Makefile",
+		"/Users/michaelgeeraert/Projects/cpsc411/PrintMplus.hs",
+		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/minisculus_lexer.x",
+		"/Users/michaelgeeraert/Projects/cpsc411/AST.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/PrintAST.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/LexMplus.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/PrintMplus.hi",
+		"/Users/michaelgeeraert/Projects/cpsc411/tests/README.md",
+		"/Users/michaelgeeraert/Projects/cpsc411/LayoutMplus.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/ErrM.hs",
+		"/Users/michaelgeeraert/Projects/cpsc411/LexMplus.x",
+		"/Users/michaelgeeraert/Projects/cpsc411/ParMplus.y",
+		"/Users/michaelgeeraert/Projects/cpsc411/DocMplus.txt",
 		"/Users/michaelgeeraert/Documents/GitHub/seng513/Assignment3/index.js",
 		"/Users/michaelgeeraert/Projects/seng513/Assignment3/index.js",
 		"/Users/michaelgeeraert/Downloads/eb-node-express-signup-master/iam_policy.json",
 		"/Users/michaelgeeraert/Desktop/app.js",
 		"/Users/michaelgeeraert/Desktop/exampleparser.hs",
-		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment_1/minisculus_lexer.x",
 		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/lexer.hs",
 		"/Users/michaelgeeraert/Desktop/Assignment3/package-lock.json",
 		"/Users/michaelgeeraert/Desktop/CPSC 411/Assignment2/basicfragment.txt",
@@ -368,6 +401,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"mylexer",
+			"end",
+			"ident"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -385,335 +421,13 @@
 	"groups":
 	[
 		{
-			"selected": 1,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "mplus.bnfc",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5115,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								156,
-								156
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2400.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "AbsMplus.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3176,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "SkelMplus.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4743,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "DocMplus.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5351,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "TestMplus.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1928,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "ParMplus.y",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7570,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "LexMplus.x",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6064,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "Makefile",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 326,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Makefile/Makefile.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "ErrM.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 796,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "LayoutMplus.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9657,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "PrintMplus.hs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 10139,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/SublimeHaskell/Syntaxes/ST2-tmLanguages/Haskell-SublimeHaskell.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				}
+			]
+		},
+		{
+			"sheets":
+			[
 			]
 		}
 	],
@@ -734,11 +448,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.571063232422,
 			1.0
 		],
 		"rows":
@@ -754,7 +475,7 @@
 	},
 	"output.sublime_haskell_output_panel":
 	{
-		"height": 0.0
+		"height": 166.0
 	},
 	"output.unsaved_changes":
 	{

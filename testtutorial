@@ -1,0 +1,5 @@
+var x : int ;
+fun f(x:int): int
+{
+	return x*x ;
+}
