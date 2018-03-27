@@ -5,6 +5,17 @@ import SymbolTypes
 import IR
 import Data.Monoid
 
+data SYM_VALUE = Var_attr (Int,M_type,Int)
+              | Fun_attr (String,[(M_type,Int)],M_type)
+              | Con_attr (Int, [M_type], String)
+              | Typ_attr [String]
+              deriving (Eq, Show)
+
+
+data SYM_TABLE = Symbol_table (ScopeType, Int,Int,[(String,SYM_VALUE)]) deriving (Show)
+
+type ST = [SYM_TABLE]
+
 empty = []
 
 new_scope:: ScopeType -> ST -> ST 
@@ -41,7 +52,7 @@ insert n ((Symbol_table(scopeType, nL, nA, sL)):rest) (FUNCTION (str, ts, t))
          | otherwise            = (n+1,(Symbol_table(scopeType, nL, nA, (str, Fun_attr(getLabel n str, ts, t)):sL)):rest )
 insert n ((Symbol_table(scopeType, nL, nA, sL)):rest) (VARIABLE (str, t, dim)) 
          | (in_index_list str sL) = error ("Symbol table error: "++ str ++"is already defined.")
-         | otherwise              = (n,Symbol_table(scopeType, nL+1, nA ,(str, Var_attr(nL+1, t, dim)):sL):rest )  
+         | otherwise              = (n,Symbol_table(scopeType, nL+1, nA ,(str, Var_attr(nL+1, t, dim)):sL):rest ) 
 
 in_index_list:: String -> [(String, SYM_VALUE)] -> Bool
 in_index_list str [] = False
@@ -51,15 +62,3 @@ in_index_list str ((x,_):xs)
 
 getLabel:: Int -> String -> String
 getLabel n str = "code_label_" ++ str
-
-
-data SYM_DESC = ARGUMENT (String, M_type, Int)
-              | FUNCTION (String, [(M_type, Int)], M_type)
-              | VARIABLE (String, M_type, Int)
-              | DATA (String)
-              | CONSTRUCTOR (String, [M_type], M_type)
-
-data SYM_I_DESC = I_VARIABLE (Int,Int,M_type,Int)
-                | I_FUNCTION (Int,String,[(M_type,Int)],M_type)
-                | I_CONSTRUCTOR (Int,[M_type],String)
-                | I_TYPE [String]
