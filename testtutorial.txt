@@ -1,6 +1,7 @@
 var x : int;
 fun f(x:int): int
 {
+	var y : int;
 	begin
 	return x*x;
 	end
