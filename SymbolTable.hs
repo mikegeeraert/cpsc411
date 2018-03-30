@@ -1,8 +1,7 @@
-module SymbolTable (ST,empty,new_scope,insert,lookup_decl,return_type) where
+module SymbolTable (ST,empty,new_scope,insert,lookup_decl,return_type, get_num_local_vars) where
 
 import AST
 import SymbolTypes
-import IR
 import Data.Monoid
 
 data SYM_VALUE = Var_attr (Int,M_type,Int)
@@ -61,4 +60,11 @@ in_index_list str ((x,_):xs)
   | otherwise = in_index_list str xs
 
 getLabel:: Int -> String -> String
-getLabel n str = "code_label_" ++ str
+getLabel n str = str ++ "_" ++ show(n)
+
+get_num_local_vars:: ST -> Int
+get_num_local_vars (Symbol_table(_, numLocalVars, _, _):_) = numLocalVars
+
+--TODO
+get_array_specifications :: ST -> ()
+get_array_specifications = undefined

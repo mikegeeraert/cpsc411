@@ -1,12 +1,12 @@
 module IR where
 
-data I_prog  = IPROG    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt])
+data I_prog  = IPROG    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt]) deriving (Show)
     -- a program node consists of 
     --   (a) the list of functions declared
     --   (b) the number of local variables
     --   (c) a list of array specifications (<offset>,<list of bounds>)
     --   (d) the body: a list of statements
-data I_fbody = IFUN     (String,[I_fbody],Int,Int,[(Int,[I_expr])],[I_stmt])
+data I_fbody = IFUN     (String,[I_fbody],Int,Int,[(Int,[I_expr])],[I_stmt]) deriving (Show)
     -- a function node consists of 
     --   (a) the label given to the function
     --   (b) the list of local functions declared
@@ -26,6 +26,7 @@ data I_stmt = IASS      (Int,Int,[I_expr],I_expr)
             | IPRINT_B  I_expr
             | IRETURN   I_expr
             | IBLOCK    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt])
+            deriving (Show)
             -- a block consists of 
             -- (a) a list of local functions
             -- (b) the number of local varibles declared
@@ -38,6 +39,7 @@ data I_expr = IINT      Int
             --  identifier (<level>,<offset>,<array indices>)
             | IAPP      (I_opn,[I_expr])
             | ISIZE     (Int,Int,Int)
+            deriving (Show)
             --   isize(<level>,<offset>,<which dimension>)
             --   level and offset identify which array the last integer 
             --   tells you which dimension you want to look at!!
@@ -46,4 +48,5 @@ data I_opn = ICALL      (String,Int)
            | ILT_F  | ILE_F  | IGT_F  | IGE_F  | IEQ_F   -- operations for floats
            | IADD | IMUL | ISUB | IDIV | INEG
            | ILT  | ILE  | IGT  | IGE  | IEQ 
-           | INOT | IAND | IOR | IFLOAT | ICEIL |IFLOOR;
+           | INOT | IAND | IOR | IFLOAT | ICEIL |IFLOOR
+           deriving (Show)
