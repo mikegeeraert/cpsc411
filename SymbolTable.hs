@@ -1,4 +1,4 @@
-module SymbolTable (ST,empty,new_scope,insert,lookup_decl,return_type, get_num_local_vars, get_i_descs) where
+module SymbolTable (ST,empty,new_scope, delete_scope, insert,lookup_decl,return_type, get_num_local_vars, get_i_descs) where
 
 import AST
 import SymbolTypes
@@ -20,6 +20,10 @@ empty = []
 new_scope:: ScopeType -> ST -> ST 
 new_scope scopeType st = (Symbol_table(scopeType, 0,0,[])):st
 
+delete_scope:: ST -> ST
+delete_scope (top:rest) = rest 
+
+
 return_type :: ST -> M_type
 return_type ((Symbol_table((L_FUN return_type), _, _, _)):_) = return_type
 return_type st  = error ("Symbol table error: current scope not in function, therefore no return type can be found")
@@ -27,7 +31,7 @@ return_type st  = error ("Symbol table error: current scope not in function, the
 lookup_decl:: ST -> String -> SYM_I_DESC 
 lookup_decl s str = find 0 s where
 
-  find n [] = error ("Could not find "++ str)
+  find n [] = error ("Could not find " ++ str)
   find n (Symbol_table(_,_,_,vs):rest) = 
          (case find_level str vs of 
             Just v -> found n v

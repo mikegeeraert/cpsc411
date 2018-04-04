@@ -18,4 +18,12 @@ x := -x;
 y := y || y;
 y := y && y;
 y := not y;
+	{
+	var z: real;	
+	begin
+	z := 5.4;
+	x := ceil(z);
+	end
+	};
+print(x);
 end

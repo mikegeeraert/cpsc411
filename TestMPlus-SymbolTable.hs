@@ -15,7 +15,8 @@ import SkelMplus
 import PrintMplus
 import AbsMplus
 import AST (prettyPrint)
-import IRGen (start, prog_analysis)
+import IRGen (prog_analysis)
+import IR (prettyPrintIR)
 
 
 
@@ -45,8 +46,11 @@ run v p s  = let ts = myLLexer s in case p ts of
                           showTree v tree
                           -- putStrV v $ "\n[Symbol Table]\n\n"
                           -- putStrV v $ show (start (transStart tree))
-                          prog_analysis (transStart tree)
-                          writeFile "Output.txt" (show (transStart tree))
+                          case prog_analysis (transStart tree) of
+                            Left emsg -> putStrV v $ emsg
+                            Right iProg -> do 
+                                           prettyPrintIR iProg
+                                           writeFile "Output.txt" (show iProg)
                           exitSuccess
 
 

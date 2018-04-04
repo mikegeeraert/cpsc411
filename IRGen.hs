@@ -5,86 +5,66 @@ import IR
 import SymbolTable
 import SymbolTypes
 
-get_decls :: (Int, ST) -> [M_decl] -> (Int, ST)
-get_decls (int, st) [] = (int, st)
-get_decls (int, st) (M_var(str, exprs, varType):rest) = case (insert int st (VARIABLE(str, varType, (length exprs)))) of
-                                                        (int, st) -> get_decls (int, st) rest
-get_decls (int, st) (M_fun(str, args, returnType, decls, stmts):rest) = case insert int st (FUNCTION(str, parseArgs args, returnType)) of
-                                                        (int, st) -> case get_decls (int, st) rest of
-                                                                    (int, st) -> case new_scope (L_FUN returnType) st of
-                                                                        st -> case get_arg_decls (int,st) args of
-                                                                            (int, st) -> get_decls (int, st) decls
-    where
-        parseArgs :: [(String, Int, M_type)] -> [(M_type, Int)]
-        parseArgs ((_, int, argType):xs) = (argType, int):(parseArgs xs) 
-        parseArgs [] = []
-        get_arg_decls :: (Int, ST) -> [(String, Int, M_type)] -> (Int, ST)
-        get_arg_decls (int, st) ((str, argDim, argType):rest) = case insert int st (ARGUMENT(str, argType, argDim)) of
-                                                             (int, st) -> get_arg_decls (int, st) rest
-        get_arg_decls (int, st) [] = (int, st)
-
-
-start:: M_prog -> (Int, ST)
-start (M_prog(decls, stmts)) = get_decls (1, new_scope L_PROG empty) decls 
-
-
 --------------------------------------------------------------------------------------------------------------------------------------------------
--- prog_analysis :: M_prog -> Either String I_prog
--- prog_analysis (M_prog(decls, stmts)) = do
---                                         prog_st <- new_scope L_PROG empty
---                                         (int, just_var_st) <- get_var_decls (0, prog_st) decls
---                                         (int',scope_st) <- get_fun_decls (int, just_var_st) decls
---                                         putStrLn $ "\n[Top Level Symbol Table]\n\n" -- for debugging
---                                         putStrLn $ show (scope_st) -- for debugging
---                                         result <- case check_stmts scope_st stmts of 
---                                                     Left emsg -> Left emsg 
---                                                     Right iStmts -> case fun_analysis (int', scope_st) decls of
---                                                                     Left emsg -> Left emsg
---                                                                     Right iFbodys -> Right build_iprog (int', scope_st) iFbodys iStmts
---                                         return result 
-
-prog_analysis :: M_prog -> IO ()
-prog_analysis (M_prog(decls, stmts)) = do
+prog_analysis :: M_prog -> Either String I_prog 
+prog_analysis (M_prog(decls, stmts)) =
     let prog_st = new_scope L_PROG empty
         (int, just_var_st) = get_var_decls (0, prog_st) decls
         (int', scope_st) = get_fun_decls (int, just_var_st) decls
-    putStrLn $ "\n[Top Level Symbol Table]\n\n" -- for debugging
-    putStrLn $ show (scope_st) -- for debugging
-    let result = case check_stmts scope_st stmts of 
+        result = case check_stmts (int', scope_st) stmts of 
                     Left emsg -> Left emsg
-                    Right iStmts -> case fun_analysis (int', scope_st) decls of
+                    Right (int'', iStmts) -> case traverse_funs (int'', scope_st) decls of
                                         Left emsg -> Left emsg
-                                        Right iFbodys -> Right (build_iprog (int', scope_st) iFbodys iStmts)
-                                        
-    putStrLn $ "\n[IR]\n\n"
-    putStrLn $ (show result)
+                                        Right (int''', iFbodys) -> Right (build_iprog (int''', scope_st) iFbodys iStmts)
+    in result                                   
 
 
 -- TODO
 build_iprog :: (Int, ST) -> [I_fbody] -> [I_stmt] -> I_prog
 build_iprog (int, st) iFbodys iStmts = IPROG(iFbodys, get_num_local_vars st, get_array_specifications (get_i_descs st), iStmts) 
-    where 
-        get_array_specifications :: [SYM_I_DESC] -> [(Int,[I_expr])]
-        get_array_specifications [] = []
-        get_array_specifications (decl:rest) = case (get_array_spec decl) of
-                                                Just array_spec -> array_spec:(get_array_specifications rest)
-                                                Nothing -> get_array_specifications rest
+
+
+get_array_specifications :: [SYM_I_DESC] -> [(Int,[I_expr])]
+get_array_specifications [] = []
+get_array_specifications (decl:rest) = case (get_array_spec decl) of
+                                        Just array_spec -> array_spec:(get_array_specifications rest)
+                                        Nothing -> get_array_specifications rest
 
 get_array_spec :: SYM_I_DESC -> Maybe (Int, [I_expr])
-get_array_spec (I_VARIABLE(level, offset, M_int, dim)) = Just (offset, replicate dim (IINT 0))
-get_array_spec (I_VARIABLE(level, offset, M_bool, dim)) = Just (offset, replicate dim (IBOOL False))
-get_array_spec (I_VARIABLE(level, offset, M_real, dim)) = Just (offset, replicate dim (IREAL 0.0))
+get_array_spec (I_VARIABLE(level, offset, mType, dim)) = case dim > 0 of
+                                                         False -> Nothing
+                                                         True -> case mType of
+                                                                    M_int -> Just (offset, replicate dim (IINT 0))
+                                                                    M_real -> Just (offset, replicate dim (IREAL 0.0))
+                                                                    M_bool -> Just (offset, replicate dim (IBOOL False))
 get_array_spec _ = Nothing
 
 
-fun_analysis :: (Int, ST) -> [M_decl] -> Either String [I_fbody]
-fun_analysis (int, st) decls = Right []
--- fun_analysis (int, st) [] = Right []
--- fun_analysis (int, st) (M_fun(stuff)) = iStmt where
---     iStmt ::  Either String [I_fbody]
---     iStmt = new_scope 
+fun_analysis :: (Int, ST) -> M_decl -> Either String (Int, I_fbody)
+fun_analysis (int, st) (M_fun(str, args, returnType, decls, stmts)) 
+    = case get_arg_decls (int, new_scope (L_FUN returnType) st) args of 
+        (int', fun_st) -> case get_var_decls (int', fun_st) decls of
+                            (int'', fun_st') -> case get_fun_decls (int'', fun_st') decls of
+                                                (int''', full_st) -> case check_stmts (int''', full_st) stmts of 
+                                                                        Left emsg -> Left ("In Function " ++ str ++ " - " ++ emsg)
+                                                                        Right (int'''', iStmts) -> case traverse_funs (int'''', fun_st) decls of
+                                                                                                    Left emsg -> Left emsg
+                                                                                                    Right (int5, iFBodys) -> case lookup_decl fun_st str of
+                                                                                                                                I_FUNCTION(level, label, arg_types, return_type) -> Right (int5, IFUN(label, iFBodys, get_num_local_vars fun_st, length arg_types, get_array_specifications (get_i_descs fun_st), iStmts))
+    where
+        get_arg_decls :: (Int, ST) -> [(String, Int, M_type)] -> (Int, ST)
+        get_arg_decls (int, st) ((str, argDim, argType):rest) = case insert int st (ARGUMENT(str, argType, argDim)) of
+                                                             (int, st) -> get_arg_decls (int, st) rest
+        get_arg_decls (int, st) [] = (int, st)
 
-
+traverse_funs :: (Int, ST) -> [M_decl] -> Either String (Int, [I_fbody])
+traverse_funs (int, st) [] = Right (int, [])
+traverse_funs (int, st) (M_fun(info):rest) = case fun_analysis (int, st) (M_fun(info)) of
+                                                Left emsg -> Left emsg
+                                                Right (int', iFbody) -> case traverse_funs (int', st) rest of
+                                                                        Left emsg -> Left emsg 
+                                                                        Right (int'', iFbodys) -> Right (int'', (iFbody:iFbodys))
+traverse_funs (int, st) (decl:rest) = traverse_funs (int, st) rest
 
 get_var_decls :: (Int, ST) -> [M_decl] -> (Int, ST)
 get_var_decls (int, st) [] = (int, st)
@@ -102,74 +82,109 @@ get_fun_decls (int, st) (M_fun(str, args, returnType, decls, stmts):rest) = case
         parseArgs [] = []
 get_fun_decls (int, st) (decl:rest) = get_fun_decls (int,st) rest
 
-check_stmts:: ST -> [M_stmt] -> Either String [I_stmt]
-check_stmts st [] = Right []
-check_stmts st (stmt:rest) = case check_stmt st stmt of
+check_stmts:: (Int, ST) -> [M_stmt] -> Either String (Int, [I_stmt])
+check_stmts (int, st) [] = Right (int, [])
+check_stmts (int, st) (stmt:rest) = case check_stmt (int,st) stmt of
                             Left emsg -> Left emsg
-                            Right iStmt -> case check_stmts st rest of
+                            Right (int', iStmt) -> case check_stmts (int',st) rest of
                                             Left emsg -> Left emsg
-                                            Right iStmts -> Right (iStmt:iStmts)            
+                                            Right (int'',iStmts) -> Right (int'', (iStmt:iStmts))            
 
 check_ass_stmt :: ST -> (String, [M_expr], M_expr) -> Either String I_stmt
-check_ass_stmt st (var, [], expr) = case lookup_decl st var of
+check_ass_stmt st (var, arrayExprs, expr) = case lookup_decl st var of
                                     I_FUNCTION(_,_,_,_) -> Left ("Statment Error: Cannot assign value to function " ++ var) 
-                                    I_VARIABLE(level, offset, varType, dim) -> case check_expr st expr of
+                                    I_VARIABLE(level, offset, varType, dim) -> case check_exprs st arrayExprs of
                                                                                 Left emsg -> Left ("In ASSIGNMENT " ++ show ((var, expr)) ++ " - " ++ emsg)
-                                                                                Right (iExpr, exprType) -> case exprType == varType of 
-                                                                                                            False -> Left ("Statement Error: Missmatched types in assignment of type " ++ show (exprType) ++ " to variable " ++ var ++ " of type " ++ show (varType))
-                                                                                                            True -> Right (IASS((level,offset,[],iExpr)))                                                                                                              
-check_while_stmt :: ST -> (M_expr, M_stmt) -> Either String I_stmt
-check_while_stmt st (expr, stmt) = case check_expr st expr of
+                                                                                Right iExprs -> case (length iExprs) <= dim of
+                                                                                                False -> Left ("Statement Error: Invalid dimension for " ++ var ++ ". Tried to access dimension " ++ show (length iExprs) ++ " but " ++ var ++ " only has " ++ show (dim) ++ " dimensions")
+                                                                                                True -> case check_valid_array_indices iExprs of
+                                                                                                        False -> Left ("Statement Error: Invalid type for array dimension expression for var " ++ var ++ ". Must be integers, but are actually" ++ show (map snd iExprs))
+                                                                                                        True -> case check_expr st expr of
+                                                                                                                Left emsg -> Left ("In ASSIGNMENT " ++ show ((var, expr)) ++ " - " ++ emsg)
+                                                                                                                Right (iExpr, exprType) -> case exprType == varType of 
+                                                                                                                                            False -> Left ("Statement Error: Missmatched types in assignment of type " ++ show (exprType) ++ " to variable " ++ var ++ " of type " ++ show (varType))
+                                                                                                                                            True -> Right (IASS((level,offset,(map fst iExprs),iExpr)))                                                                                                              
+check_while_stmt :: (Int, ST) -> (M_expr, M_stmt) -> Either String (Int, I_stmt)
+check_while_stmt (int, st) (expr, stmt) = case check_expr st expr of
                                     Left emsg -> Left ("In WHILE statement " ++ show ((expr, stmt)) ++ " - " ++ emsg)
                                     Right (iExpr, mType) -> case mType of
                                                             M_int -> Left ("Statement Error: Expression in (" ++ show(expr) ++ ") is of type int, and must be bool")
                                                             M_real -> Left ("Statement Error: Expression in (" ++ show(expr) ++ ") is of type real, and must be bool")
-                                                            M_bool -> case check_stmt st stmt of 
+                                                            M_bool -> case check_stmt (int, st) stmt of 
                                                                         Left emsg -> Left ("In WHILE statement " ++ show ((expr, stmt)) ++ " - " ++ emsg)
-                                                                        Right iStmt -> Right (IWHILE(iExpr, iStmt))                                                                        
-check_cond_stmt :: ST -> (M_expr, M_stmt, M_stmt) -> Either String I_stmt
-check_cond_stmt st (expr, stmt1, stmt2) = case check_expr st expr of
+                                                                        Right (int', iStmt) -> Right (int', IWHILE(iExpr, iStmt))                                                                        
+check_cond_stmt :: (Int, ST) -> (M_expr, M_stmt, M_stmt) -> Either String (Int, I_stmt)
+check_cond_stmt (int, st) (expr, stmt1, stmt2) = case check_expr st expr of
                                     Left emsg -> Left ("In CONDITIONAL statement " ++ show ((expr, stmt1, stmt2)) ++ " - " ++ emsg)
                                     Right (iExpr, mType) -> case mType of
                                                             M_int -> Left ("Statement Error: Expression in (" ++ show(expr) ++ ") is of type int, and must be bool")
                                                             M_real -> Left ("Statement Error: Expression in (" ++ show(expr) ++ ") is of type real, and must be bool")
-                                                            M_bool -> case check_stmts st (stmt1:stmt2:[]) of
+                                                            M_bool -> case check_stmts (int, st) (stmt1:stmt2:[]) of
                                                                             Left emsg -> Left ("In CONDITIONAL statement " ++ show ((expr, stmt1, stmt2)) ++ " - " ++ emsg)
-                                                                            Right (iStmt1:iStmt2:[]) -> Right (ICOND(iExpr, iStmt1, iStmt2))
+                                                                            Right (int', (iStmt1:iStmt2:[])) -> Right (int', ICOND(iExpr, iStmt1, iStmt2))
 check_read_stmt :: ST -> (String, [M_expr]) -> Either String I_stmt
-check_read_stmt = undefined
-
+check_read_stmt st (str, exprs) = case lookup_decl st str of 
+                                    I_FUNCTION(_,_,_,_) -> Left ("Statement Error: Cannot read value to function " ++ str)
+                                    I_VARIABLE(level, offset, varType, dim) -> case check_exprs st exprs of
+                                                                                Left emsg -> Left ("In READ statement " ++ show (str, exprs) ++ " - " ++ emsg)
+                                                                                Right iExprs -> case (length iExprs) <= dim of
+                                                                                                False -> Left ("Statement Error: Invalid dimension for " ++ str ++ ". Tried to access dimension " ++ show (length iExprs) ++ " but " ++ str ++ " only has " ++ show (dim) ++ " dimensions")
+                                                                                                True -> case check_valid_array_indices iExprs of
+                                                                                                        False -> Left ("Statement Error: Invalid type for array dimension expression for var " ++ str ++ ". Must be integers, but are actually" ++ show (map snd iExprs))
+                                                                                                        True -> case varType of 
+                                                                                                                M_int -> Right (IREAD_I(level, offset, (map fst iExprs)))
+                                                                                                                M_real -> Right (IREAD_F(level, offset, (map fst iExprs)))
+                                                                                                                M_bool -> Right (IREAD_B(level, offset, (map fst iExprs)))
 check_print_stmt :: ST -> M_expr -> Either String I_stmt
-check_print_stmt = undefined
-
+check_print_stmt st expr = case check_expr st expr of
+                            Left emsg -> Left ("In PRINT statement " ++ show (expr) ++ " - " ++ emsg)
+                            Right (iExpr, mType) -> case mType of
+                                                    M_int -> Right (IPRINT_I(iExpr))
+                                                    M_real -> Right (IPRINT_F(iExpr))
+                                                    M_bool -> Right (IPRINT_B(iExpr))
 check_return_stmt :: ST -> M_expr -> Either String I_stmt
-check_return_stmt = undefined
+check_return_stmt st expr = case check_expr st expr of
+                            Left emsg -> Left ("In RETURN statement " ++ show (expr) ++ " - " ++ emsg)
+                            Right (iExpr, mType) -> Right (IRETURN(iExpr))
+check_block_stmt :: (Int, ST) -> ([M_decl], [M_stmt]) -> Either String (Int, I_stmt)
+check_block_stmt (int, st) (decls, stmts) = case get_var_decls (int, (new_scope L_BLK st)) decls of
+                                            (int', partial_block_st) -> case get_fun_decls (int', partial_block_st) decls of
+                                                                        (int'', block_st) -> case check_stmts (int'', block_st) stmts of
+                                                                                                Left emsg -> Left ("In BLOCK statement " ++ show (stmts) ++ " - " ++ emsg)
+                                                                                                Right (int''', iStmts) -> case traverse_funs (int''', block_st) decls of
+                                                                                                                            Left emsg -> Left ("In BLOCK statement " ++ show (decls) ++ " - " ++ emsg)
+                                                                                                                            Right (int'''', iFbodys) -> case delete_scope block_st of
+                                                                                                                                                        st -> Right (int'''', IBLOCK(iFbodys, (get_num_local_vars block_st), get_array_specifications (get_i_descs st), iStmts))
 
-check_block_stmt :: ST -> ([M_decl], [M_stmt]) -> Either String I_stmt
-check_block_stmt = undefined
 
-check_stmt:: ST -> M_stmt -> Either String I_stmt
-check_stmt st (M_ass(str, exprs, expr)) = case check_ass_stmt st (str, exprs, expr) of
-                                            Right iStmt -> Right iStmt
+check_stmt:: (Int,ST) -> M_stmt -> Either String (Int, I_stmt)
+check_stmt (int,st) (M_ass(str, exprs, expr)) = case check_ass_stmt st (str, exprs, expr) of
+                                            Right iStmt -> Right (int, iStmt)
                                             Left emsg -> Left emsg
-check_stmt st (M_while(expr, stmt)) = case check_while_stmt st (expr, stmt) of
-                                        Right iStmt -> Right iStmt
+check_stmt (int,st) (M_while(expr, stmt)) = case check_while_stmt (int, st) (expr, stmt) of
+                                        Right (int', iStmt) -> Right (int', iStmt)
                                         Left emsg -> Left emsg
-check_stmt st (M_cond(expr, stmt1, stmt2)) = case check_cond_stmt st (expr, stmt1, stmt2) of
-                                                Right iStmt -> Right iStmt
+check_stmt (int,st) (M_cond(expr, stmt1, stmt2)) = case check_cond_stmt (int, st) (expr, stmt1, stmt2) of
+                                                Right (int', iStmt) -> Right (int', iStmt)
                                                 Left emsg -> Left emsg
-check_stmt st (M_read(str, exprs)) = case check_read_stmt st (str, exprs) of
-                                            Right iStmt -> Right iStmt
+check_stmt (int,st) (M_read(str, exprs)) = case check_read_stmt st (str, exprs) of
+                                            Right iStmt -> Right (int, iStmt)
                                             Left emsg -> Left emsg
-check_stmt st (M_print(expr)) = case check_print_stmt st expr of
-                                        Right iStmt -> Right iStmt 
+check_stmt (int,st) (M_print(expr)) = case check_print_stmt st expr of
+                                        Right iStmt -> Right (int, iStmt) 
                                         Left emsg -> Left emsg
-check_stmt st (M_return(expr)) = case check_return_stmt st expr of
-                                        Right iStmt -> Right iStmt 
+check_stmt (int,st) (M_return(expr)) = case check_return_stmt st expr of
+                                        Right iStmt -> Right (int, iStmt) 
                                         Left emsg -> Left emsg
-check_stmt st (M_block(decls, stmts)) = case check_block_stmt st (decls, stmts) of
-                                            Right iStmt -> Right iStmt 
+check_stmt (int,st) (M_block(decls, stmts)) = case check_block_stmt (int,st) (decls, stmts) of
+                                            Right (int', iStmt) -> Right (int', iStmt) 
                                             Left emsg -> Left emsg     
+
+check_valid_array_indices:: [(I_expr, M_type)] -> Bool
+check_valid_array_indices [] = True
+check_valid_array_indices ((iExpr, mType):rest) = case mType == M_int of
+                                                    False -> False
+                                                    True -> check_valid_array_indices rest
 
 check_exprs:: ST -> [M_expr] -> Either String [(I_expr, M_type)]
 check_exprs st [] = Right []
@@ -349,14 +364,3 @@ expr_types_equal (mType1:mType2:[]) = case mType1 == mType2 of
                                         False -> Left ("Expression Error: Missmatched types in operation: " ++ show(mType1) ++ " and " ++ show(mType2))
                                         True -> Right mType1
 expr_types_equal (mType1:mType2:rest) = Left ("Expression Error: Invalid number of arguments given for operation. " ++ show (mType1:mType2:rest))                                                                                                    
-
--- data I_opn = ICALL      (String,Int)
---            | IADD_F | IMUL_F | ISUB_F | IDIV_F | INEG_F
---            | ILT_F  | ILE_F  | IGT_F  | IGE_F  | IEQ_F   -- operations for floats
---            | IADD | IMUL | ISUB | IDIV | INEG
---            | ILT  | ILE  | IGT  | IGE  | IEQ 
---            | INOT | IAND | IOR | IFLOAT | ICEIL |IFLOOR
--- data M_operation = M_fn String | M_add | M_mul | M_sub | M_div | M_neg
---                  | M_lt | M_le | M_gt | M_ge | M_eq | M_not | M_and | M_or
---                  | M_float | M_floor | M_ceil
---                  deriving(Eq, Show, Generic)

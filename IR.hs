@@ -1,12 +1,17 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module IR where
 
-data I_prog  = IPROG    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt]) deriving (Show)
+import Text.PrettyPrint.GenericPretty
+import Text.PrettyPrint
+
+data I_prog  = IPROG    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt]) deriving (Show, Generic)
     -- a program node consists of 
     --   (a) the list of functions declared
     --   (b) the number of local variables
     --   (c) a list of array specifications (<offset>,<list of bounds>)
     --   (d) the body: a list of statements
-data I_fbody = IFUN     (String,[I_fbody],Int,Int,[(Int,[I_expr])],[I_stmt]) deriving (Show)
+data I_fbody = IFUN     (String,[I_fbody],Int,Int,[(Int,[I_expr])],[I_stmt]) deriving (Show, Generic)
     -- a function node consists of 
     --   (a) the label given to the function
     --   (b) the list of local functions declared
@@ -26,7 +31,7 @@ data I_stmt = IASS      (Int,Int,[I_expr],I_expr)
             | IPRINT_B  I_expr
             | IRETURN   I_expr
             | IBLOCK    ([I_fbody],Int,[(Int,[I_expr])],[I_stmt])
-            deriving (Show)
+            deriving (Show, Generic)
             -- a block consists of 
             -- (a) a list of local functions
             -- (b) the number of local varibles declared
@@ -39,7 +44,7 @@ data I_expr = IINT      Int
             --  identifier (<level>,<offset>,<array indices>)
             | IAPP      (I_opn,[I_expr])
             | ISIZE     (Int,Int,Int)
-            deriving (Show)
+            deriving (Show, Generic)
             --   isize(<level>,<offset>,<which dimension>)
             --   level and offset identify which array the last integer 
             --   tells you which dimension you want to look at!!
@@ -49,4 +54,33 @@ data I_opn = ICALL      (String,Int)
            | IADD | IMUL | ISUB | IDIV | INEG
            | ILT  | ILE  | IGT  | IGE  | IEQ 
            | INOT | IAND | IOR | IFLOAT | ICEIL |IFLOOR
-           deriving (Show)
+           deriving (Show, Generic)
+
+astStyle :: Style
+astStyle = Style {mode = PageMode, lineLength = 100, ribbonsPerLine = 1}
+
+prettyPrintIR :: I_prog -> IO()
+prettyPrintIR i  = ppStyle astStyle i
+
+instance Out I_prog where
+  doc (IPROG (iFbodys,numLocalVars,arraySpecs,iStmts)) = parens $ text "IPROG:" $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts)
+  docPrec _ = doc
+instance Out I_fbody where
+  doc (IFUN (label,iFbodys,numLocalVars,numArgs,arraySpecs,iStmts)) = parens $ text "IFBODY:" <+> text label $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc numArgs) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts)
+  docPrec _ = doc
+instance Out I_stmt where 
+  doc (IASS (level, offset, arrayIndices, expr)) = parens $ text "IASS: " <+>  text (show(level)) <+> text ", " <+> text (show(offset)) <+> text "," <+> text (show(arrayIndices)) <+> text ", " <+> doc expr
+  doc (IWHILE (expr, stmt)) = parens $ text "IWHILE: " <+> (doc expr) $$ nest 1 (doc stmt)
+  doc (ICOND (expr, stmt1, stmt2)) = parens $ text "ICOND:" <+> (doc expr) $$ nest 1 (doc stmt1) $$ nest 1(doc stmt2)
+  doc (IREAD_F (level, offset, arrayIndices)) = parens $ text "IREAD_F:" <+> text (show(level)) <+> text "," <+> text (show(offset)) <+> text "," <+> text (show(arrayIndices))
+  doc (IREAD_I (level, offset, arrayIndices)) = parens $ text "IREAD_I:" <+> text (show(level)) <+> text "," <+> text (show(offset)) <+> text "," <+> text (show(arrayIndices))
+  doc (IREAD_B (level, offset, arrayIndices)) = parens $ text "IREAD_B:" <+> text (show(level)) <+> text "," <+> text (show(offset)) <+> text "," <+> text (show(arrayIndices))
+  doc (IPRINT_F (expr)) = parens $ text "IPRINT_F: " <+> (doc expr)
+  doc (IPRINT_I (expr)) = parens $ text "IPRINT_I: " <+> (doc expr)
+  doc (IPRINT_B (expr)) = parens $ text "IPRINT_B: " <+> (doc expr)
+  doc (IRETURN (expr)) = parens $ text "IRETURN: " <+> (doc expr)
+  doc (IBLOCK (iFbodys, numLocalVars, arraySpecs, iStmts)) = parens $ text "IBLOCK: " $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts) 
+  docPrec _ = doc
+
+instance Out I_expr where
+instance Out I_opn where
