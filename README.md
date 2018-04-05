@@ -1,13 +1,16 @@
-# Assignment 3: Lexer and Parser
+# CPSC 411: Front-End Compiler for M+
 
 This is the frontend for the M+ compiler. The language specification was directly translated from http://pages.cpsc.ucalgary.ca/~robin/class/411/M+/M+.txt into [mplus.bnfc](https://github.com/mikegeeraert/cpsc411/blob/master/mplus.bnfc)
 
 The language specification in the .bnfc file is then fed into the [BNF Converter](https://github.com/BNFC/bnfc) which builds:
 1. [Alex](https://www.haskell.org/alex/) Lexer Generator File
 2. [Happy](https://www.haskell.org/happy/) Parser Generator File
-3. Several other files which help in the configuration of the compiler and the `make` process (outlined in **Running and Compiling the Compiler**)
+3. Several other files which help in the configuration of the compiler and the `make` process (outlined in **Downloading and Making the compiler front end**)
 
-## Requirements
+## Important Notes:
+ - Arrays and Datatypes have not been fully implemented for Semantic analysis. 
+
+## System Requirements
 
  1. [Haskell Platform](https://www.haskell.org/downloads#platform)
  - May work with a more basic Haskell installation but I haven't personally tested it

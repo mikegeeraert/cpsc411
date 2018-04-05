@@ -2,6 +2,7 @@ all:
 	happy -gca ParMplus.y
 	alex -g LexMplus.x
 	ghc --make TestMplus.hs -o TestMplus
+	ghc --make TestMplus-IR.hs -o TestMPlus-IR.hs
 
 clean:
 	-rm -f *.log *.aux *.hi *.o *.dvi
