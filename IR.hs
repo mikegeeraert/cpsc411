@@ -66,7 +66,7 @@ instance Out I_prog where
   doc (IPROG (iFbodys,numLocalVars,arraySpecs,iStmts)) = parens $ text "IPROG:" $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts)
   docPrec _ = doc
 instance Out I_fbody where
-  doc (IFUN (label,iFbodys,numLocalVars,numArgs,arraySpecs,iStmts)) = parens $ text "IFBODY:" <+> text label $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc numArgs) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts)
+  doc (IFUN (label,iFbodys,numLocalVars,numArgs,arraySpecs,iStmts)) = parens $ text "IFUN:" <+> text label $$ nest 1 (doc iFbodys) $$ nest 1 (doc numLocalVars) $$ nest 1 (doc numArgs) $$ nest 1 (doc arraySpecs) $$ nest 1 (doc iStmts)
   docPrec _ = doc
 instance Out I_stmt where 
   doc (IASS (level, offset, arrayIndices, expr)) = parens $ text "IASS: " <+>  text (show(level)) <+> text ", " <+> text (show(offset)) <+> text "," <+> text (show(arrayIndices)) <+> text ", " <+> doc expr

@@ -1,0 +1,10 @@
+/* This test should fail, since the return expression must match the return value of function foo. ie: bool != int */
+var x: int;
+var b: bool;
+fun foo(x: real): bool {
+	begin 
+		return x;
+	end
+};
+begin 
+end

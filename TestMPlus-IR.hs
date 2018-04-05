@@ -43,9 +43,7 @@ run v p s  = let ts = myLLexer s in case p ts of
                           putStrLn s
                           exitFailure
            Ok  tree -> do putStrLn "\nParse Successful!"
-                          showTree v tree
-                          -- putStrV v $ "\n[Symbol Table]\n\n"
-                          -- putStrV v $ show (start (transStart tree))
+                          putStrV v $ "\n[Intermediate Representaion]\n\n"
                           case prog_analysis (transStart tree) of
                             Left emsg -> putStrV v $ emsg
                             Right iProg -> do 

@@ -31,7 +31,7 @@ return_type st  = error ("Symbol table error: current scope not in function, the
 lookup_decl:: ST -> String -> SYM_I_DESC 
 lookup_decl s str = find 0 s where
 
-  find n [] = error ("Could not find " ++ str)
+  find n [] = error ("Could not find symbol: \"" ++ str ++ "\"")
   find n (Symbol_table(_,_,_,vs):rest) = 
          (case find_level str vs of 
             Just v -> found n v

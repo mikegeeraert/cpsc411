@@ -1,0 +1,25 @@
+/* Testing Different Statement types. This should successfully produce a correct IR */
+var a: int;
+var b: bool;
+var c: real;
+begin
+	b := true;
+	while b  								% WHILE
+	do
+	{
+		var x: int;
+		begin 
+			x := 1;
+			if x>5 then b := false else b := b;
+		end
+	};
+
+	if b 									% CONDITIONAL
+	then a := 276
+	else a := 0;
+
+	print a;								% PRINT
+	
+	read c;									% REAL
+
+end

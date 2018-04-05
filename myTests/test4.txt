@@ -1,0 +1,29 @@
+/* Testing different assignment applications. All the below are valid and should produce an IR */
+var x: int;
+var y: real;
+var z: bool;
+begin
+	x := 4;
+	y := 40.3;
+	z := true;
+
+	x := x + 4;
+	x := x - 4;
+	x := -x;
+	x := x + ceil(y);
+	x := x + floor(y);
+	x := x * x;
+	x := x / x;
+
+	y := float(x);
+	y := y + y + y;
+	y := y * 3.0;
+	y := y/3.0;
+	y := -y;
+
+	z := ceil(float(x)) < floor(y); 
+	z := x =< x+1;
+	z := y >= y;
+	z := x = x;
+	z := not z;
+end

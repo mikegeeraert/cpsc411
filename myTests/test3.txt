@@ -1,0 +1,24 @@
+/* Test nested functions with call to function (baz) in the previous scope. This should successfully produce IR */
+var a: int;
+var b: bool;
+var c: real;
+fun foo(x: int, y: bool, z: real): int {
+	var l: int;
+	fun bar(arg1: int): int {
+		
+		begin
+			return baz(arg1);
+		end
+	};
+	begin
+		return bar(x);
+	end
+};
+fun baz(x: int): int {
+	begin
+		return x;
+	end
+};
+begin
+	print foo(20, true, 20.1);
+end

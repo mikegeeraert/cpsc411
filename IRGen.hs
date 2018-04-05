@@ -47,10 +47,10 @@ fun_analysis (int, st) (M_fun(str, args, returnType, decls, stmts))
                             (int'', fun_st') -> case get_fun_decls (int'', fun_st') decls of
                                                 (int''', full_st) -> case check_stmts (int''', full_st) stmts of 
                                                                         Left emsg -> Left ("In Function " ++ str ++ " - " ++ emsg)
-                                                                        Right (int'''', iStmts) -> case traverse_funs (int'''', fun_st) decls of
+                                                                        Right (int'''', iStmts) -> case traverse_funs (int'''', full_st) decls of
                                                                                                     Left emsg -> Left emsg
                                                                                                     Right (int5, iFBodys) -> case lookup_decl fun_st str of
-                                                                                                                                I_FUNCTION(level, label, arg_types, return_type) -> Right (int5, IFUN(label, iFBodys, get_num_local_vars fun_st, length arg_types, get_array_specifications (get_i_descs fun_st), iStmts))
+                                                                                                                                I_FUNCTION(level, label, arg_types, return_type) -> Right (int5, IFUN(label, iFBodys, get_num_local_vars full_st, length arg_types, get_array_specifications (get_i_descs fun_st), iStmts))
     where
         get_arg_decls :: (Int, ST) -> [(String, Int, M_type)] -> (Int, ST)
         get_arg_decls (int, st) ((str, argDim, argType):rest) = case insert int st (ARGUMENT(str, argType, argDim)) of
@@ -145,7 +145,9 @@ check_print_stmt st expr = case check_expr st expr of
 check_return_stmt :: ST -> M_expr -> Either String I_stmt
 check_return_stmt st expr = case check_expr st expr of
                             Left emsg -> Left ("In RETURN statement " ++ show (expr) ++ " - " ++ emsg)
-                            Right (iExpr, mType) -> Right (IRETURN(iExpr))
+                            Right (iExpr, mType) -> case return_type st  == mType of 
+                                                    False -> Left ("In RETURN statement: " ++ show (expr) ++ " - " ++ "Statement Error: Return type of " ++ show(mType) ++ " does not match function return type of " ++ show (return_type st)) 
+                                                    True -> Right (IRETURN(iExpr))
 check_block_stmt :: (Int, ST) -> ([M_decl], [M_stmt]) -> Either String (Int, I_stmt)
 check_block_stmt (int, st) (decls, stmts) = case get_var_decls (int, (new_scope L_BLK st)) decls of
                                             (int', partial_block_st) -> case get_fun_decls (int', partial_block_st) decls of

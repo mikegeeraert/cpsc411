@@ -1,0 +1,21 @@
+/* testing mutually recursive functions. This should successfully produce an IR */ 
+var y: int;
+fun a(b:int): int
+{ 
+	var z: int;
+	begin
+		z := 7;
+		if c(z) then z := b else z := z;
+		return z;
+	end
+};
+fun c(d:int): bool
+{
+	begin
+		return d > 0;
+	end
+};
+begin
+	read y;
+	print a(y);
+end

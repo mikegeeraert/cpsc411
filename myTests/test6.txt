@@ -1,0 +1,6 @@
+/* This test should fail, since you cannot assign a bool expression to an int */
+var x: int;
+var b: bool;
+begin 
+	x := b || b;
+end
