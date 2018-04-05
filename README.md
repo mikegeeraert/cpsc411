@@ -29,17 +29,30 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 
  3. run `make` to compile the ParMplus.y parser, as well as the LexMplus.x lexer
 
- 4. test the compiler using `./TestMplus *inputfile.txt*`
+### Assignment 3:
+ 4. test the lexer and parser using `./TestMplus <<inputfile.txt>>`
   - there are many tests in the `cpsc411/tests/` directory which have been downloaded from Dr. Cockett's website
   - The AST is pretty printed to the screen and written to an output file called "Output.txt" in the same directory
 
-  ## Testing Files
+##### Testing Files
 
-  1. "test{{number}}.txt" files
-  - All these files have been pulled off Dr. Cockett's website. All of the tests should succeed the lexing + parsing steps, excpet test15.txt, which contains a syntax error
+1. "test{{number}}.txt" files
+- All these files have been pulled off Dr. Cockett's website. All of the tests should succeed the lexing + parsing steps, excpet test15.txt, which contains a syntax error
 
-  2. "fib.txt", "sumarray.txt", "exp.txt" files
-  - These files are also examples of real M+ programs that have been pulled off Dr. Cockett's website. These should all compile
+2. "fib.txt", "sumarray.txt", "exp.txt" files
+- These files are also examples of real M+ programs that have been pulled off Dr. Cockett's website. These should all compile
 
-  2. "mytest{{number}}.txt" files
-  - All of these files contain syntax errors and should fail during lexing/parsing. The reasons for the failures are at the top of each test file in a comment. 
+2. "mytest{{number}}.txt" files
+- All of these files contain syntax errors and should fail during lexing/parsing. The reasons for the failures are at the top of each test file in a comment. 
+
+### Assignment 4:
+5. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
+- There are 7 of my own tests in the myTests/ directory. 
+
+##### Testing Files
+
+1. test1-test4.txt
+- These files all test *successful* semantic analysis of the program. There is a more detailed description in a comment at the top of each file
+
+2. test5-test7.txt
+- These files test common *failures* that semantic analysis will give if the code is malformed. They also demonstrate the correct usage of the symbol table and typechecking 
