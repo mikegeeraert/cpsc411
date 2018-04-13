@@ -1,12 +1,19 @@
 
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+# Above ignores all files without an extension
+
+
 *.hi
 *.o
 *.bak
 Output.txt
 README.txt
 *.am
-TestMplus-Stack
-TestMplus-Stack
-TestMplus-Stack
-.DS_Store
 .DS_Store
