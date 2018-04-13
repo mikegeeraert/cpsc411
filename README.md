@@ -50,12 +50,20 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 
 ### Assignment 4:
 5. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
-- There are 7 of my own tests in the myTests/ directory. 
+- There are 7 of my own tests in the *IRTests/* directory. 
 
-##### Testing Files
+##### Testing Files (/IRTests)
 
 1. test1-test4.txt
 - These files all test *successful* semantic analysis of the program. There is a more detailed description in a comment at the top of each file
 
 2. test5-test7.txt
 - These files test common *failures* that semantic analysis will give if the code is malformed. They also demonstrate the correct usage of the symbol table and typechecking 
+
+### Assignment 5:
+6. test AM stack code generation using `./TestMplus-Stack <<inputfile.m+>>`
+- There are 3 of my own tests in the *AMtests/* directory.
+- Also in */AMTests*, there are all the other tests from the /home/411/M+ directory on the comp sci linux server. 
+
+##### Testing Files (/AMtests)
+The output from the compiler will be written to `Output.am` in the root directory. In addition, the same AM stack code will be displayed in the terminal.
