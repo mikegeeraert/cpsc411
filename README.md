@@ -30,7 +30,7 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
  	Download the zip and unpack to a directory of your choosing 
  2. Navigate to the top level directory ie -> `yourDirectory/cpsc411/`
 
- 3. run `make` to compile the ParMplus.y parser, as well as the LexMplus.x lexer
+ 3. run `make` to compile all the files. This should build everything you need for the M+ Compiler to work.
 
 ### Assignment 3:
 1. test the lexer and parser using `./TestMplus <<inputfile.txt>>`
@@ -49,8 +49,7 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 - All of these files contain syntax errors and should fail during lexing/parsing. The reasons for the failures are at the top of each test file in a comment. 
 
 ### Assignment 4:
-1. compile the IR generator/testing routine using `ghc --make TestMplus-IR.hs`
-2. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
+1. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
 - There are 7 of my own tests in the *IRTests/* directory. 
 
 ##### Testing Files (/IRTests)
@@ -62,8 +61,7 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 - These files test common *failures* that semantic analysis will give if the code is malformed. They also demonstrate the correct usage of the symbol table and typechecking 
 
 ### Assignment 5:
-1. compile the IR generator/testing routine using `ghc --make TestMplus-Stack.hs`
-2. test AM stack code generation using `./TestMplus-Stack <<inputfile.m+>>`
+1. test AM stack code generation using `./TestMplus-Stack <<inputfile.m+>>`
 - There are 3 of my own tests in the *AMtests/* directory.
 - Also in */AMTests*, there are all the other tests from the /home/411/M+ directory on the comp sci linux server. 
 
