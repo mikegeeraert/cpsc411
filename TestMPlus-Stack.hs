@@ -49,7 +49,7 @@ run v p s  = let ts = myLLexer s in case p ts of
                             Left emsg -> putStrV v $ emsg
                             Right iProg -> do 
                                            putStrV v (codeGeneration iProg)
-                                           writeFile "Output.txt" (codeGeneration iProg)
+                                           writeFile "Output.am" (codeGeneration iProg)
                           exitSuccess
 
 

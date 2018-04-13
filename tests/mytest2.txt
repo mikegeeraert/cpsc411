@@ -1,9 +1,0 @@
-/* Should report a syntax error at end of file since the parser did not encounter an END token */
-
-var x[2]:int;
-
-begin
-x[1]:=10; x[2]:=15; 
-x[1]:= x[2]+x[1];
-print x[1];
-print x[2];

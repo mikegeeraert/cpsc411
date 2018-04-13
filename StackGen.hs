@@ -183,9 +183,9 @@ code_exprs (expr:rest) = (code_expr expr ++ code_exprs rest)
 code_expr:: I_expr -> String
 code_expr (IINT int) = "\tLOAD_I " ++ show int ++ "\n"
 
-code_expr (IREAL float) = "\tLOAD_R" ++ show float ++ "\n"
+code_expr (IREAL float) = "\tLOAD_F " ++ show float ++ "\n"
 
-code_expr (IBOOL bool) = "\tLOAD_B" ++ show bool ++ "\n"
+code_expr (IBOOL bool) = "\tLOAD_B " ++ showAMbool bool ++ "\n"
 
 code_expr (IID (level, offset, arrayIndices)) = code_pointer level ++ 
                                                 "\tLOAD_O " ++ show offset ++ "\n"
@@ -195,7 +195,7 @@ code_expr (IAPP (ICALL(label, level), exprs)) = code_exprs (reverse exprs) ++
                                                 code_pointer level ++ 
                                                 "\tLOAD_R %fp\n" ++ 
                                                 "\tLOAD_R %cp\n" ++ 
-                                                "\tJUMP f_" ++ label ++ "\n"
+                                                "\tJUMP " ++ label ++ "\n"
 
 code_expr (IAPP (operation, exprs)) = code_exprs exprs ++
                                       "\tAPP " ++ get_op operation ++ "\n"
@@ -226,4 +226,8 @@ get_op IAND = "AND"
 get_op IOR = "OR"     
 get_op IFLOAT = "FLOAT"   
 get_op IFLOOR = "FLOOR"   
-get_op ICEIL = "CEIL"     
+get_op ICEIL = "CEIL"    
+
+showAMbool:: Bool -> String
+showAMbool True = "true"
+showAMbool False = "false" 

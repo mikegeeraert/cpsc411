@@ -1,4 +1,4 @@
-/* testing mutually recursive functions. This should successfully produce an IR */ 
+/* testing mutually recursive functions. This ensures all functions have been correctly appended to the end of the AM stack code*/ 
 var y: int;
 fun a(b:int): int
 { 

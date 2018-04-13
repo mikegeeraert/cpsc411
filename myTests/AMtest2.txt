@@ -1,0 +1,31 @@
+/* testing the declaration of functions in different places. Should be able to declare nested functions as well as functions inside blocks. 
+	During AM creation, functions declared inside blocks must be passed up seperately from the statements, so they can be appended to the end of the AM instructions. This code should simply return: true if input > 4, else false . (ie a() and b() are never called) */ 
+var y: int;
+var result: bool;
+fun a(x: int): int {
+	fun b(z: real): real {
+		begin
+			return 5.0;
+		end
+	};
+	begin 
+		return 5;
+	end
+};
+begin
+	{
+		fun blockfun(isAwesome: bool): bool {
+				begin
+					return not isAwesome;
+				end
+		};
+		begin
+			read y;
+
+			if y<4 
+			then result := blockfun(true) 
+			else result := blockfun(false);
+		end
+	};
+	print (result);
+end
