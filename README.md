@@ -33,7 +33,7 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
  3. run `make` to compile the ParMplus.y parser, as well as the LexMplus.x lexer
 
 ### Assignment 3:
- 4. test the lexer and parser using `./TestMplus <<inputfile.txt>>`
+1. test the lexer and parser using `./TestMplus <<inputfile.txt>>`
   - there are many tests in the `cpsc411/tests/` directory which have been downloaded from Dr. Cockett's website
   - The AST is pretty printed to the screen and written to an output file called "Output.txt" in the same directory
 
@@ -49,7 +49,8 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 - All of these files contain syntax errors and should fail during lexing/parsing. The reasons for the failures are at the top of each test file in a comment. 
 
 ### Assignment 4:
-5. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
+1. compile the IR generator/testing routine using `ghc --make TestMplus-IR.hs`
+2. test semantic analysis using `./TestMplus-IR <<inputfile.txt>>`
 - There are 7 of my own tests in the *IRTests/* directory. 
 
 ##### Testing Files (/IRTests)
@@ -61,7 +62,8 @@ The language specification in the .bnfc file is then fed into the [BNF Converter
 - These files test common *failures* that semantic analysis will give if the code is malformed. They also demonstrate the correct usage of the symbol table and typechecking 
 
 ### Assignment 5:
-6. test AM stack code generation using `./TestMplus-Stack <<inputfile.m+>>`
+1. compile the IR generator/testing routine using `ghc --make TestMplus-Stack.hs`
+2. test AM stack code generation using `./TestMplus-Stack <<inputfile.m+>>`
 - There are 3 of my own tests in the *AMtests/* directory.
 - Also in */AMTests*, there are all the other tests from the /home/411/M+ directory on the comp sci linux server. 
 
