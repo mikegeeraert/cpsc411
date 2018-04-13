@@ -49,7 +49,7 @@ insert:: Int -> ST -> SYM_DESC -> (Int,ST)
 insert n [] d =  error "Symbol table error: insertion before defining scope."
 insert n ((Symbol_table(scopeType, nL, nA, sL)):rest) (ARGUMENT (str, t, dim)) 
          | (in_index_list str sL) = error ("Symbol table error: " ++ str ++"is already defined.")
-         | otherwise              = (n, Symbol_table(scopeType, nL, nA+1 , (str, Var_attr((nA-4), t, dim)):sL):rest )
+         | otherwise              = (n, Symbol_table(scopeType, nL, nA+1 , (str, Var_attr((-4-nA), t, dim)):sL):rest )
 insert n ((Symbol_table(scopeType, nL, nA, sL)):rest) (FUNCTION (str, ts, t))
          | in_index_list str sL = error ("Symbol table error: "++str++"is already defined.")
          | otherwise            = (n+1,(Symbol_table(scopeType, nL, nA, (str, Fun_attr(getLabel n str, ts, t)):sL)):rest )

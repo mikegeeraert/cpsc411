@@ -1,0 +1,9 @@
+var x:int;
+var y:int;
+var a: bool;
+begin
+   x := 4;
+   y := 5;
+   a := x > y;
+   print a;
+end
